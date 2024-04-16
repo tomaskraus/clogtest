@@ -1,0 +1,52 @@
+{
+  "name": "clogtest",
+  "version": "0.1.0",
+  "description": "CLI output-assertion-test app. Runs a javascript file and tests its standard output againts expected values written in the special comments (//=>) in that file.",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "format:check": "npx prettier --check .",
+    "format:write": "npx prettier --write .",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "jest",
+    "lint": "npx eslint"
+  },
+  "keywords": [
+    "test",
+    "console",
+    "console.log",
+    "log",
+    "console log",
+    "doctest",
+    "stdout",
+    "output"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomaskraus/clogtest.git"
+  },
+  "author": "Tomas Kraus <tomas.kraus.dev@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/jest": "^29.5.12",
+    "chalk": "^4.1.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.0.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.5"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "console-redirect": "^1.0.0",
+    "loose-string-test": "^0.3.0",
+    "stream-buffers": "^3.0.2"
+  }
+}
