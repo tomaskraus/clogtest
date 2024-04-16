@@ -90,6 +90,8 @@ $ npx clogtest ./examples.js
 Tests:  4 passed, 4 total
 ```
 
+7. Hurrah🙂
+
 ## Installation
 
 ```bash
