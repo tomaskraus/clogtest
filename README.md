@@ -61,6 +61,18 @@ $ npx clogtest ./examples.js
 Tests:  3 failed, 1 passed, 4 total
 ```
 
+## Installation
+
+```bash
+$ npm i --save-dev clogtest
+```
+
+or globally:
+
+```bash
+$ npm i -g clogtest
+```
+
 ## How It Works
 
 Someone may find some similarities between _ClogTest_ and Python's [doctest](https://docs.python.org/3/library/doctest.html), but _clogtest_ has a different purpose and different internal workflow.
