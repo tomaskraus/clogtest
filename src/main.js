@@ -8,7 +8,9 @@ const {
   createTestInputs,
   runTests,
   printResults,
+  out,
 } = require("./test-and-report");
+const appName = require("../package.json").name;
 
 const TEST_MARK = "//=>";
 
@@ -31,6 +33,7 @@ const doTests = async (testInputs) => {
 };
 
 const doTestsAndPrintResults = async (fileName) => {
+  out(`${appName} ${fileName}`);
   const [testInputs, inputs] = await doTestInputsAndInput(fileName);
   const [allResults, fails] = await doTests(testInputs);
   printResults(allResults, fails, fileName, inputs);

@@ -31,6 +31,7 @@ $ npx clogtest ./examples.js
 3. see the result:
 
 ```
+clogtest ./examples.js
 ● ./examples.js:3
   Expected:     [1,4,6 ...
   Received:     [ 2, 4, 6, 8, 10 ]
@@ -87,6 +88,7 @@ $ npx clogtest ./examples.js
 6. view new result:
 
 ```js
+clogtest ./examples-ok.js
 Tests:  4 passed, 4 total
 ```
 

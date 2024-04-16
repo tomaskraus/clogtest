@@ -100,4 +100,5 @@ module.exports = {
   createTestInputs,
   runTests,
   printResults,
+  out,
 };
