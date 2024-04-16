@@ -1,7 +1,7 @@
 ## clogtest
 
 **Console-log-test**, or **clogtest** is a command line application for testing output assertions.  
-It runs a javascript file and tests its standard output againts expected values written in the special comments (`//=>`) in that file."
+It runs a javascript file and tests its standard output againts expected values written in the special comments (`//=>`) in that file.
 
 _Clogtest's_ main purpose is to test code examples before they're copy-pasted to the documentation.
 
@@ -30,7 +30,7 @@ $ npx clogtest ./examples.js
 
 3. see results:
 
-```bash
+```
 ● ./examples.js:3
   Expected:     [1,4,6 ...
   Received:     [ 2, 4, 6, 8, 10 ]
