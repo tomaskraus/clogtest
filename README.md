@@ -87,7 +87,7 @@ $ npx clogtest ./examples.js
 
 6. view new result:
 
-```js
+```
 clogtest ./examples-ok.js
 Tests:  4 passed, 4 total
 ```
