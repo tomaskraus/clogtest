@@ -10,9 +10,16 @@ const {
   printResults,
   out,
 } = require("./test-and-report");
+const { createPattern } = require("loose-string-test");
+const fs = require("fs/promises");
+
 const appName = require("../package.json").name;
 
 const TEST_MARK = "//=>";
+
+const printHeader = (action, fileName) => {
+  out(`${appName} ${action}: ${fileName}`);
+};
 
 const doTestInputsAndInput = async (fileName) => {
   const input = await loadInputFile(fileName);
@@ -33,15 +40,48 @@ const doTests = async (testInputs) => {
 };
 
 const doTestsAndPrintResults = async (fileName) => {
-  out(`${appName} ${fileName}`);
+  printHeader("test", fileName);
   const [testInputs, inputs] = await doTestInputsAndInput(fileName);
   const [allResults, fails] = await doTests(testInputs);
   printResults(allResults, fails, fileName, inputs);
   return fails.length === 0 ? 0 : 1;
 };
 
+const writeAssertions = async (fileName) => {
+  printHeader("write-assertions", fileName);
+  const [testInputs, inputs] = await doTestInputsAndInput(fileName);
+  let testInputIndex = 0;
+  let assertionsFilledCount = 0;
+
+  const content = inputs
+    .map((line, index) => {
+      let s = line;
+      if (
+        testInputIndex < testInputs.length &&
+        index + 1 === testInputs[testInputIndex].lineNumber
+      ) {
+        if (testInputs[testInputIndex].expected === "") {
+          s =
+            TEST_MARK +
+            " " +
+            createPattern(testInputs[testInputIndex].received);
+          assertionsFilledCount++;
+          out(`\t${fileName}:${index + 1}`);
+        }
+        testInputIndex++;
+      }
+      return s;
+    })
+    .join("\n");
+  if (assertionsFilledCount > 0) {
+    await fs.writeFile(fileName, content);
+  }
+  out(`${assertionsFilledCount} assertion comment(s) filled`);
+};
+
 module.exports = {
   doTestInputsAndInput,
   doTestsAndPrintResults,
   doTests,
+  writeAssertions,
 };
