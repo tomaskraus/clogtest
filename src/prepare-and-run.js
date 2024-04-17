@@ -50,7 +50,7 @@ const runFileAndGatherOutput = (injectedFileName) => {
   const myConsole = redirect(buff, process.stderr, true);
 
   try {
-    require(`..${Path.sep}` + injectedFileName);
+    require(process.cwd() + Path.sep + injectedFileName);
   } finally {
     myConsole.release();
     buff.end();
