@@ -1,4 +1,4 @@
-const { looseStringTest, parsePattern } = require("loose-string-test");
+const { looseStringTest, parsePattern, REST_MARK } = require("loose-string-test");
 const { appLog } = require("./shared.js");
 const log = appLog.extend("test-and-report");
 const chalk = require("chalk");
@@ -71,13 +71,14 @@ const printLinesAround = (lines, paddingStr, lineNumber) => {
 const printFail =
   (inputFileName, inputFileLines) =>
   ({ lineNumber, expected, received }) => {
-    const patt = parsePattern(expected);
-    const startMark = patt.isExactPattern ? '"' : "";
-    const endMark = patt.isStartPattern ? `${startMark} ...` : startMark;
+    const exppatt = parsePattern(expected);
+    const recpatt = parsePattern(received);
+    const startMark = exppatt.isExactPattern ? '"' : "";
+    const endMark = exppatt.isStartPattern ? `${startMark}${REST_MARK}` : startMark;
 
     out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-    out(`  Expected: \t${startMark}${cok(patt.body)}${endMark}`);
-    out(`  Received: \t${startMark}${cerr(received)}${startMark}`);
+    out(`  Expected: \t${startMark}${cok(exppatt.isExactPattern ? exppatt.body : exppatt.stripped)}${endMark}`);
+    out(`  Received: \t${startMark}${cerr(exppatt.isExactPattern ? recpatt.body : recpatt.stripped)}${startMark}`);
     out("");
     printLinesAround(inputFileLines, "    ", lineNumber);
     out("");
