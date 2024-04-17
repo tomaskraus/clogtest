@@ -108,4 +108,4 @@ $ npm i -g clogtest
 
 ## How It Works
 
-Someone may find some similarities between _ClogTest_ and Python's [doctest](https://docs.python.org/3/library/doctest.html), but _clogtest_ has a different purpose and different internal workflow.
+Someone may find some similarities between _clogTest_ and Python's [doctest](https://docs.python.org/3/library/doctest.html), but _clogtest_ has a different purpose.
