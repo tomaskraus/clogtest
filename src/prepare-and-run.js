@@ -13,12 +13,24 @@ const redirect = require("console-redirect");
 const streamBuffers = require("stream-buffers");
 const process = require("node:process");
 
+/**
+ *
+ * @param {string} fileName
+ * @returns {Promise<string>}
+ */
 const loadInputFile = async (fileName) => {
   log(`opening input file [${fileName}]`);
   const data = await fs.readFile(fileName, { encoding: "utf-8" });
   return data.split("\n");
 };
 
+/**
+ *
+ * @param {string} testMark
+ * @param {string} inputFileName
+ * @param {[string]} inputFileLines
+ * @returns {Promise<string>} a name of a newly created file
+ */
 const createFileWithInjectedPrints = async (
   testMark,
   inputFileName,
@@ -44,7 +56,12 @@ const createFileWithInjectedPrints = async (
   return injectedFileName;
 };
 
-const runFileAndGatherOutput = (fileName) => {
+/**
+ *
+ * @param {string} fileName
+ * @returns {[string]}
+ */
+const runFileAndGatherOutputLines = (fileName) => {
   log(`runFile [${fileName}]`);
   const buff = new streamBuffers.WritableStreamBuffer();
   const myConsole = redirect(buff, process.stderr, true);
@@ -56,11 +73,17 @@ const runFileAndGatherOutput = (fileName) => {
     buff.end();
   }
   log(`runFile output size [${buff.size()}]`);
-  return buff.getContentsAsString() || "";
+  return (buff.getContentsAsString() || "").split("\n");
 };
 
-const groupOutputByAssertions = (testMarkStr, output) => {
-  const [_, groups] = output.split("\n").reduce(
+/**
+ *
+ * @param {string} testMarkStr
+ * @param {[string]} outputLines
+ * @returns {[string]}
+ */
+const groupOutputByAssertions = (testMarkStr, outputLines) => {
+  const [_, groups] = outputLines.reduce(
     ([currentOutputStr, outputArr], line) => {
       if (line.startsWith(testMarkStr)) {
         outputArr.push(currentOutputStr);
@@ -75,17 +98,17 @@ const groupOutputByAssertions = (testMarkStr, output) => {
   return groups;
 };
 
-const prepareAssertionStr = (testMark, s) => {
+const prepareAssertionStr = (testMarkStr, s) => {
   const withRestoredEOLs = s.replace(/(\\n)/g, "\n");
-  return withRestoredEOLs.slice(testMark.length).trim();
+  return withRestoredEOLs.slice(testMarkStr.length).trim();
 };
 
 /**
  *
- * @param {*} testMarkStr
- * @param {*} outputGroups
- * @param {*} inputFileLines
- * @returns [{lineNumber: number, expected: string, received: string}]
+ * @param {string} testMarkStr
+ * @param {[string]} outputGroups
+ * @param {[string]} inputFileLines
+ * @returns {[object]} [{lineNumber: number, expected: string, received: string}]
  */
 const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
   lineNumber = 1;
@@ -105,6 +128,12 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
   return testInputs;
 };
 
+/**
+ *
+ * @param {string} testMarkStr
+ * @param {string} fileName
+ * @returns {Promise<[[object], [string]]>}
+ */
 const createTestInputsAndInput = async (testMarkStr, fileName) => {
   const input = await loadInputFile(fileName);
   const injectedFileName = await createFileWithInjectedPrints(
@@ -112,7 +141,7 @@ const createTestInputsAndInput = async (testMarkStr, fileName) => {
     fileName,
     input
   );
-  const output = runFileAndGatherOutput(injectedFileName);
+  const output = runFileAndGatherOutputLines(injectedFileName);
   const groups = groupOutputByAssertions(testMarkStr, output);
   const testInputs = createTestInputs(testMarkStr, groups, input);
   return [testInputs, input];
@@ -121,7 +150,7 @@ const createTestInputsAndInput = async (testMarkStr, fileName) => {
 module.exports = {
   loadInputFile,
   createFileWithInjectedPrints,
-  runFileAndGatherOutput,
+  runFileAndGatherOutput: runFileAndGatherOutputLines,
   groupOutputByAssertions,
   createTestInputs,
   createTestInputsAndInput,

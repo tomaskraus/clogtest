@@ -20,15 +20,26 @@ const testOneItem = ({ lineNumber, expected, received }) => {
   };
 };
 
+/**
+ *
+ * @param {[object]} testInputs [{lineNumber: number, expected: string, received: string, pass: boolean}]
+ * @returns
+ */
 const runTests = (testInputs) => {
   log(`runTests running [${testInputs.length}] test(s)`);
   const allResults = testInputs.map(testOneItem);
   return [allResults, allResults.filter((t) => !t.pass)];
 };
 
+/**
+ *
+ * @param {[object]} results
+ * @param {[object]} fails
+ * @param {string} inputFileName
+ * @param {[string]} inputLines
+ */
 const printResults = (results, fails, inputFileName, inputLines) => {
   log(`printResults for file [${inputFileName}]`);
-  // console.log("inputLines: ", inputLines);
   fails.map(printFail(inputFileName, inputLines));
   printResume(fails.length, results.length);
 };
