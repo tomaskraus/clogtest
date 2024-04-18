@@ -3,7 +3,7 @@ const { doTestsAndPrintResults } = require("./main");
 const { Command } = require("commander");
 
 const program = new Command();
-program.name("clogtest");
+program.name("clogtest").showHelpAfterError();
 
 program
   .command("test")
@@ -18,7 +18,6 @@ program
     clogtest test ./examples.js
     `
   )
-  .showHelpAfterError()
   .action(async (program) => {
     const retCode = await doTestsAndPrintResults(program);
     if (retCode !== 0) process.exit(retCode);
