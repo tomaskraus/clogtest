@@ -41,7 +41,5 @@ const doTestsAndPrintResults = async (fileName) => {
 };
 
 module.exports = {
-  doTestInputsAndInput,
   doTestsAndPrintResults,
-  doTests,
 };
