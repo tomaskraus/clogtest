@@ -3,30 +3,41 @@ const { doTestsAndPrintResults, writeAssertions } = require("./main");
 const { Command } = require("commander");
 
 const program = new Command();
+program.name("clogtest").showHelpAfterError();
+
 program
-  .name("clogtest")
-  .argument("<file>", "a javascript file with a code to be run")
+  .command("test")
+  .alias("t")
+  .argument("<program>", "a javascript file with a code to be run")
   .description(
-    "Runs the code and tests its console.log's output againts expected values written in the assertion comments (//=>) in the code."
-  )
-  .option(
-    "-w, --write",
-    "Does not test. Instead, runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code"
+    "Tests program's output against program's assertion comment's values."
   )
   .addHelpText(
     "after",
     `example: 
-    clogtest ./examples.js
+    clogtest test ./examples.js
     `
   )
-  .showHelpAfterError()
-  .action(async (file, options) => {
-    if (options.write) {
-      await writeAssertions(file);
-    } else {
-      const retCode = await doTestsAndPrintResults(file);
-      if (retCode !== 0) process.exit(retCode);
-    }
+  .action(async (program) => {
+    const retCode = await doTestsAndPrintResults(program);
+    if (retCode !== 0) process.exit(retCode);
+  });
+
+program
+  .command("write")
+  .alias("w")
+  .argument("<program>", "a javascript file with a code to be run")
+  .description(
+    "Runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code."
+  )
+  .addHelpText(
+    "after",
+    `example: 
+    clogtest write ./examples.js
+    `
+  )
+  .action(async (program) => {
+    await writeAssertions(program);
   });
 
 program.parse();

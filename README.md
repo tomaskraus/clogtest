@@ -24,8 +24,8 @@ console.log({}.append);
 
 2. run `clogtest` on it:
 
-```bash
-$ npx clogtest ./examples.js
+```
+$ npx clogtest test ./examples.js
 ```
 
 3. see the result:
@@ -33,8 +33,8 @@ $ npx clogtest ./examples.js
 ```
 clogtest ./examples.js
 ● ./examples.js:3
-  Expected:     [1,4,6 ...
-  Received:     [ 2, 4, 6, 8, 10 ]
+  Expected:     [1,4,6...
+  Received:     [2,4,6,8,10]
 
          1 | const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
          2 | console.log(result);
@@ -81,8 +81,8 @@ console.log({}.append);
 
 5. run again:
 
-```bash
-$ npx clogtest ./examples.js
+```
+$ npx clogtest test ./examples.js
 ```
 
 6. view new result:
