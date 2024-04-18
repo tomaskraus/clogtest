@@ -24,8 +24,8 @@ console.log({}.append);
 
 2. run `clogtest` on it:
 
-```bash
-$ npx clogtest ./examples.js
+```
+$ npx clogtest test ./examples.js
 ```
 
 3. see the result:
@@ -81,8 +81,8 @@ console.log({}.append);
 
 5. run again:
 
-```bash
-$ npx clogtest ./examples.js
+```
+$ npx clogtest test ./examples.js
 ```
 
 6. view new result:

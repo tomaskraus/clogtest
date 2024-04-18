@@ -3,21 +3,24 @@ const { doTestsAndPrintResults } = require("./main");
 const { Command } = require("commander");
 
 const program = new Command();
+program.name("clogtest");
+
 program
-  .name("clogtest")
-  .argument("<file>", "a javascript file with a code to be run")
+  .command("test")
+  .alias("t")
+  .argument("<program>", "a javascript file with a code to be run")
   .description(
-    "Runs the code and tests its console.log's output againts expected values written in the special comments in the code."
+    "Tests program's output against program's assertion comment's values."
   )
   .addHelpText(
     "after",
     `example: 
-    clogtest ./examples.js
+    clogtest test ./examples.js
     `
   )
   .showHelpAfterError()
-  .action(async (file) => {
-    const retCode = await doTestsAndPrintResults(file);
+  .action(async (program) => {
+    const retCode = await doTestsAndPrintResults(program);
     if (retCode !== 0) process.exit(retCode);
   });
 
