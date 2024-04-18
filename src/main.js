@@ -1,45 +1,26 @@
-const {
-  loadInputFile,
-  createFileWithInjectedPrints,
-  runFileAndGatherOutput,
-  groupOutputByAssertions,
-} = require("./prepare-and-run");
-const {
-  createTestInputs,
-  runTests,
-  printResults,
-  out,
-} = require("./test-and-report");
+const { createTestInputsAndInput } = require("./prepare-and-run");
+const { runTests, printResults, out } = require("./test-and-report");
 const appName = require("../package.json").name;
 
 const TEST_MARK = "//=>";
 
-const doTestInputsAndInput = async (fileName) => {
-  const input = await loadInputFile(fileName);
-  const injectedFileName = await createFileWithInjectedPrints(
-    TEST_MARK,
-    fileName,
-    input
-  );
-  const output = runFileAndGatherOutput(injectedFileName);
-  const groups = groupOutputByAssertions(TEST_MARK, output);
-  const testInputs = createTestInputs(TEST_MARK, groups, input);
-  return [testInputs, input];
-};
-
-const doTests = async (testInputs) => {
-  const allResults = runTests(testInputs);
-  return [allResults, allResults.filter((r) => !r.pass)];
+const doTests = async (fileName) => {
+  const [testInputs] = await createTestInputsAndInput(TEST_MARK, fileName);
+  return runTests(testInputs);
 };
 
 const doTestsAndPrintResults = async (fileName) => {
-  out(`${appName} ${fileName}`);
-  const [testInputs, inputs] = await doTestInputsAndInput(fileName);
-  const [allResults, fails] = await doTests(testInputs);
+  out(`${appName} test: ${fileName}`);
+  const [testInputs, inputs] = await createTestInputsAndInput(
+    TEST_MARK,
+    fileName
+  );
+  const [allResults, fails] = runTests(testInputs);
   printResults(allResults, fails, fileName, inputs);
   return fails.length === 0 ? 0 : 1;
 };
 
 module.exports = {
   doTestsAndPrintResults,
+  doTests,
 };

@@ -1,32 +1,13 @@
-const { looseStringTest, parsePattern, REST_MARK } = require("loose-string-test");
+const {
+  looseStringTest,
+  parsePattern,
+  REST_MARK,
+} = require("loose-string-test");
 const { appLog } = require("./shared.js");
 const log = appLog.extend("test-and-report");
 const chalk = require("chalk");
 
 const out = console.error;
-
-const prepareAssertion = (testMark, s) => {
-  const withRestoredEOLs = s.replace(/(\\n)/g, "\n");
-  return withRestoredEOLs.slice(testMark.length).trim();
-};
-
-const createTestInputs = (testMark, outputGroups, inputFileLines) => {
-  lineNumber = 1;
-  groupIndex = 0;
-  const testInputs = inputFileLines
-    .map((line) => ({
-      expected: line.trim(),
-      lineNumber: lineNumber++,
-    }))
-    .filter((item) => item.expected.startsWith(testMark))
-    .map((item) => ({
-      ...item,
-      expected: prepareAssertion(testMark, item.expected),
-      received: outputGroups[groupIndex++] || "",
-    }));
-  log(`testInput item count [${testInputs.length}]`);
-  return testInputs;
-};
 
 // testResult = { pass: boolean, lineNumber: number, expected: string, received: string }
 
@@ -41,7 +22,8 @@ const testOneItem = ({ lineNumber, expected, received }) => {
 
 const runTests = (testInputs) => {
   log(`runTests running [${testInputs.length}] test(s)`);
-  return testInputs.map(testOneItem);
+  const allResults = testInputs.map(testOneItem);
+  return [allResults, allResults.filter((t) => !t.pass)];
 };
 
 const printResults = (results, fails, inputFileName, inputLines) => {
@@ -74,11 +56,17 @@ const printFail =
     const exppatt = parsePattern(expected);
     const recpatt = parsePattern(received);
     const startMark = exppatt.isExactPattern ? '"' : "";
-    const endMark = exppatt.isStartPattern ? `${startMark}${REST_MARK}` : startMark;
+    const endMark = exppatt.isStartPattern
+      ? `${startMark}${REST_MARK}`
+      : startMark;
 
     out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-    out(`  Expected: \t${startMark}${cok(exppatt.isExactPattern ? exppatt.body : exppatt.stripped)}${endMark}`);
-    out(`  Received: \t${startMark}${cerr(exppatt.isExactPattern ? recpatt.body : recpatt.stripped)}${startMark}`);
+    out(
+      `  Expected: \t${startMark}${cok(exppatt.isExactPattern ? exppatt.body : exppatt.stripped)}${endMark}`
+    );
+    out(
+      `  Received: \t${startMark}${cerr(exppatt.isExactPattern ? recpatt.body : recpatt.stripped)}${startMark}`
+    );
     out("");
     printLinesAround(inputFileLines, "    ", lineNumber);
     out("");
@@ -98,7 +86,6 @@ const printResume = (numberOfFails, numberTotal) => {
 };
 
 module.exports = {
-  createTestInputs,
   runTests,
   printResults,
   out,

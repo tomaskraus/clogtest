@@ -1,11 +1,6 @@
 // const mock = require("mock-fs");
 
-const { doTestInputsAndInput, doTests } = require("../src/main");
-
-const doTestsFromFile = async (fileName) => {
-  const [testInputs] = await doTestInputsAndInput(fileName);
-  return doTests(testInputs);
-};
+const { doTests } = require("../src/main");
 
 // beforeEach(() => {
 //   mock({
@@ -20,19 +15,17 @@ const doTestsFromFile = async (fileName) => {
 
 describe("normal ops", () => {
   test("empty input means empty results", async () => {
-    const [results, fails] = await doTestsFromFile("./test/inputs/empty.js");
+    const [results, fails] = await doTests("./test/inputs/empty.js");
     expect(results.length).toEqual(0);
   });
 
   test("input with no assertions means empty results", async () => {
-    const [results, fails] = await doTestsFromFile(
-      "./test/inputs/no-assertions.js"
-    );
+    const [results, fails] = await doTests("./test/inputs/no-assertions.js");
     expect(results.length).toEqual(0);
   });
 
   test("input with two assertions means two results", async () => {
-    const [results, fails] = await doTestsFromFile(
+    const [results, fails] = await doTests(
       "./test/inputs/one-true-one-false.js"
     );
     expect(results.length).toEqual(2);
