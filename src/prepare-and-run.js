@@ -44,13 +44,13 @@ const createFileWithInjectedPrints = async (
   return injectedFileName;
 };
 
-const runFileAndGatherOutput = (injectedFileName) => {
-  log(`runFile [${injectedFileName}]`);
+const runFileAndGatherOutput = (fileName) => {
+  log(`runFile [${fileName}]`);
   const buff = new streamBuffers.WritableStreamBuffer();
   const myConsole = redirect(buff, process.stderr, true);
 
   try {
-    require(process.cwd() + Path.sep + injectedFileName);
+    require(process.cwd() + Path.sep + fileName);
   } finally {
     myConsole.release();
     buff.end();
@@ -59,10 +59,10 @@ const runFileAndGatherOutput = (injectedFileName) => {
   return buff.getContentsAsString() || "";
 };
 
-const groupOutputByAssertions = (testMark, output) => {
+const groupOutputByAssertions = (testMarkStr, output) => {
   const [_, groups] = output.split("\n").reduce(
     ([currentOutputStr, outputArr], line) => {
-      if (line.startsWith(testMark)) {
+      if (line.startsWith(testMarkStr)) {
         outputArr.push(currentOutputStr);
         return ["", outputArr];
       }
@@ -75,9 +75,54 @@ const groupOutputByAssertions = (testMark, output) => {
   return groups;
 };
 
+const prepareAssertionStr = (testMark, s) => {
+  const withRestoredEOLs = s.replace(/(\\n)/g, "\n");
+  return withRestoredEOLs.slice(testMark.length).trim();
+};
+
+/**
+ *
+ * @param {*} testMarkStr
+ * @param {*} outputGroups
+ * @param {*} inputFileLines
+ * @returns [{lineNumber: number, expected: string, received: string}]
+ */
+const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
+  lineNumber = 1;
+  groupIndex = 0;
+  const testInputs = inputFileLines
+    .map((line) => ({
+      expected: line.trim(),
+      lineNumber: lineNumber++,
+    }))
+    .filter((item) => item.expected.startsWith(testMarkStr))
+    .map((item) => ({
+      ...item,
+      expected: prepareAssertionStr(testMarkStr, item.expected),
+      received: outputGroups[groupIndex++] || "",
+    }));
+  log(`testInput item count [${testInputs.length}]`);
+  return testInputs;
+};
+
+const createTestInputsAndInput = async (testMarkStr, fileName) => {
+  const input = await loadInputFile(fileName);
+  const injectedFileName = await createFileWithInjectedPrints(
+    testMarkStr,
+    fileName,
+    input
+  );
+  const output = runFileAndGatherOutput(injectedFileName);
+  const groups = groupOutputByAssertions(testMarkStr, output);
+  const testInputs = createTestInputs(testMarkStr, groups, input);
+  return [testInputs, input];
+};
+
 module.exports = {
   loadInputFile,
   createFileWithInjectedPrints,
   runFileAndGatherOutput,
   groupOutputByAssertions,
+  createTestInputs,
+  createTestInputsAndInput,
 };
