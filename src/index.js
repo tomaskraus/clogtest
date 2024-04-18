@@ -19,8 +19,7 @@ program
     `
   )
   .action(async (program) => {
-    const retCode = await doTestsAndPrintResults(program);
-    if (retCode !== 0) process.exit(retCode);
+    process.exitCode = await doTestsAndPrintResults(program);
   });
 
 program.parse();
