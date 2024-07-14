@@ -26,7 +26,7 @@ const createFileWithInjectedPrints = async (
 ) => {
   const parsedPath = Path.parse(inputFileName);
   const injectedFileName = Path.normalize(
-    `${parsedPath.dir}${Path.sep}.clogtest.${parsedPath.name}${parsedPath.ext}`
+    Path.join(parsedPath.dir, `.clogtest.${parsedPath.name}${parsedPath.ext}`)
   );
   log(`creating injected file [${injectedFileName}]`);
 
