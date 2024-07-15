@@ -1,9 +1,11 @@
 const { createTestInputsAndInput } = require("./prepare-and-run");
 const { runTests, printResults, out } = require("./test-and-report");
-const { createPattern } = require("loose-string-test");
+const SSP = require("simple-string-pattern").default;
 const fs = require("fs/promises");
 
 const appName = require("../package.json").name;
+
+const MAX_WRITTEN_PATTERN_LENGTH = 20;
 
 const TEST_MARK = "//=>";
 
@@ -47,7 +49,9 @@ const writeAssertions = async (fileName) => {
           s =
             TEST_MARK +
             " " +
-            createPattern(testInputs[testInputIndex].received);
+            SSP.parse(testInputs[testInputIndex].received)
+              .limitPatternLen(MAX_WRITTEN_PATTERN_LENGTH)
+              .value();
           assertionsFilledCount++;
           out(`\t${fileName}:${index + 1}`);
         }

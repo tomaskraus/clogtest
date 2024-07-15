@@ -76,8 +76,7 @@ const groupOutputByAssertions = (testMarkStr, output) => {
 };
 
 const prepareAssertionStr = (testMark, s) => {
-  const withRestoredEOLs = s.replace(/(\\n)/g, "\n");
-  return withRestoredEOLs.slice(testMark.length).trim();
+  return s.slice(testMark.length).trim();
 };
 
 /**

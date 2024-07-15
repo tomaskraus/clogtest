@@ -1,6 +1,8 @@
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
 console.log(result);
-//=> [2,4,6 ...
+// We can use a short notation (...) to write
+// only the part of the expected output
+//=> [ 2, 4, 6, ...
 
 console.log("Hello World".substring(5, 8));
 //=> " Wo"

@@ -46,7 +46,7 @@
   "dependencies": {
     "commander": "^12.0.0",
     "console-redirect": "^1.0.0",
-    "loose-string-test": "^1.0.0",
+    "simple-string-pattern": "file:../simple-string-pattern",
     "stream-buffers": "^3.0.2"
   }
 }

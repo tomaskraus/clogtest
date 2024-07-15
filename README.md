@@ -10,7 +10,7 @@ _Clogtest's_ main purpose is to test code examples before they're copy-pasted to
 ```js
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
 console.log(result);
-//=> [1,4,6 ...
+//=> [1, 2, 3, 4, 5]
 
 console.log("Hello World".substring(5, 7));
 //=> " Wo"
@@ -28,20 +28,20 @@ console.log({}.append);
 $ npx clogtest test ./examples.js
 ```
 
-3. see the result:
+3. see the test result:
 
 ```
-clogtest ./examples.js
-● ./examples.js:3
-  Expected:     [1,4,6...
-  Received:     [2,4,6,8,10]
+clogtest test: examples.js
+● examples.js:3
+  Expected:     [1, 2, 3, 4, 5]
+  Received:     [ 2, 4, 6, 8, 10 ]
 
          1 | const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
          2 | console.log(result);
-    >    3 | //=> [1,4,6 ...
+    >    3 | //=> [1, 2, 3, 4, 5]
          4 |
 
-● ./examples.js:6
+● examples.js:6
   Expected:     " Wo"
   Received:     " W"
 
@@ -50,7 +50,7 @@ clogtest ./examples.js
     >    6 | //=> " Wo"
          7 |
 
-● ./examples.js:12
+● examples.js:12
   Expected:     null
   Received:     undefined
 
@@ -62,12 +62,14 @@ clogtest ./examples.js
 Tests:  3 failed, 1 passed, 4 total
 ```
 
-4. fix the code in `./examples.js`
+4. fix those faulty (//=>) comments in `./examples.js`
 
 ```js
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
 console.log(result);
-//=> [2,4,6 ...
+// We can use a short notation (...) to write
+// only the part of the expected output
+//=> [ 2, 4, 6, ...
 
 console.log("Hello World".substring(5, 8));
 //=> " Wo"
@@ -82,13 +84,13 @@ console.log({}.append);
 5. run again:
 
 ```
-$ npx clogtest test ./examples.js
+$ npx clogtest test examples.js
 ```
 
-6. view new result:
+6. view the new result:
 
 ```
-clogtest ./examples-ok.js
+clogtest test: examples-ok.js
 Tests:  4 passed, 4 total
 ```
 

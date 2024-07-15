@@ -1,22 +1,29 @@
-const {
-  looseStringTest,
-  parsePattern,
-  REST_MARK,
-} = require("loose-string-test");
+const SSP = require("simple-string-pattern").default;
 const { appLog } = require("./shared.js");
 const log = appLog.extend("test-and-report");
 const chalk = require("chalk");
 
 const out = console.error;
 
+// maximum length of patterns created from output
+const MAX_OUTPUT_PATTERN_LENGTH = 60;
+
 // testResult = { pass: boolean, lineNumber: number, expected: string, received: string }
 
 const testOneItem = ({ lineNumber, expected, received }) => {
+  let pass = false;
+  let errMsg = undefined;
+  try {
+    pass = new SSP(expected).test(received);
+  } catch (err) {
+    errMsg = err.message;
+  }
   return {
     lineNumber,
     expected,
     received,
-    pass: looseStringTest(expected, received),
+    pass,
+    errMsg,
   };
 };
 
@@ -52,21 +59,20 @@ const printLinesAround = (lines, paddingStr, lineNumber) => {
 
 const printFail =
   (inputFileName, inputFileLines) =>
-  ({ lineNumber, expected, received }) => {
-    const exppatt = parsePattern(expected);
-    const recpatt = parsePattern(received);
-    const startMark = exppatt.isExactPattern ? '"' : "";
-    const endMark = exppatt.isStartPattern
-      ? `${startMark}${REST_MARK}`
-      : startMark;
+  ({ lineNumber, expected, received, errMsg }) => {
+    if (!errMsg) {
+      const exppatt = new SSP(expected);
+      const recpatt = SSP.parse(received);
 
-    out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-    out(
-      `  Expected: \t${startMark}${cok(exppatt.isExactPattern ? exppatt.body : exppatt.stripped)}${endMark}`
-    );
-    out(
-      `  Received: \t${startMark}${cerr(exppatt.isExactPattern ? recpatt.body : recpatt.stripped)}${startMark}`
-    );
+      out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
+      out(`  Expected: \t${exppatt.value()}`);
+      out(
+        `  Received: \t${recpatt.limitPatternLen(MAX_OUTPUT_PATTERN_LENGTH).value()}`
+      );
+    } else {
+      out(`${cerr("!!!")} ${csh(inputFileName + ":" + lineNumber)}`);
+      out(`${cerr("Error")}: ${errMsg}`);
+    }
     out("");
     printLinesAround(inputFileLines, "    ", lineNumber);
     out("");
