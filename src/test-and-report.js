@@ -44,7 +44,7 @@ const cerr = chalk.red;
 const cok = chalk.green;
 const csh = chalk.blue;
 
-const printLinesAround = (lines, paddingStr, lineNumber) => {
+const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
   const NUM_LINES_BEFORE = 2;
   const NUM_LINES_AFTER = 1;
   const start = Math.max(lineNumber - 1 - NUM_LINES_BEFORE, 0);
@@ -74,7 +74,7 @@ const printFail =
       out(`${cerr("Error")}: ${errMsg}`);
     }
     out("");
-    printLinesAround(inputFileLines, "    ", lineNumber);
+    printSourceLinesAround(inputFileLines, "    ", lineNumber);
     out("");
   };
 
