@@ -33,7 +33,7 @@ const createFileWithInjectedPrints = async (
   const injectedContent = inputFileLines
     .reduce((acc, line) => {
       acc.push(line);
-      if (line.startsWith(testMark)) {
+      if (line.trimStart().startsWith(testMark)) {
         acc.push(`console.log('${testMark}')`);
       }
       return acc;
