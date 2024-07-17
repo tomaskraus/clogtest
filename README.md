@@ -1,7 +1,7 @@
 ## clogtest
 
 **Console-log-test**, or **clogtest** is a command line application for testing output assertions.  
-It runs a javascript file and tests its standard output againts expected values written in the special comments (`//=>`) in that file.
+It runs a javascript file and tests a match between file's output and patterns written in the special comments (`//=>`) in that file.
 
 _Clogtest's_ main purpose is to test code examples before they're copy-pasted to the documentation.
 
@@ -22,6 +22,9 @@ console.log({}.append);
 //=> null
 ```
 
+Those values in (`//=>`) comments are written using a [Simple string pattern](https://github.com/tomaskraus/simple-string-pattern) (a.k.a. **SSP**) syntax.  
+**SSP** expressions are much simpler to read and write than [Regular expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions).
+
 2. run `clogtest` on it:
 
 ```
@@ -33,8 +36,8 @@ $ npx clogtest test ./examples.js
 ```
 clogtest test: examples.js
 ● examples.js:3
-  Expected:     [1, 2, 3, 4, 5]
-  Received:     [ 2, 4, 6, 8, 10 ]
+  Pattern:                      [1, 2, 3, 4, 5]
+  does not match the output:    [ 2, 4, 6, 8, 10 ]
 
          1 | const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
          2 | console.log(result);
@@ -42,18 +45,20 @@ clogtest test: examples.js
          4 |
 
 ● examples.js:6
-  Expected:     " Wo"
-  Received:     " W"
+  Pattern:                      " Wo"
+  does not match the output:     W
 
+         3 | //=> [1, 2, 3, 4, 5]
          4 |
          5 | console.log("Hello World".substring(5, 7));
     >    6 | //=> " Wo"
          7 |
 
 ● examples.js:12
-  Expected:     null
-  Received:     undefined
+  Pattern:                      null
+  does not match the output:    undefined
 
+         9 | //=> 2
         10 |
         11 | console.log({}.append);
     >   12 | //=> null
