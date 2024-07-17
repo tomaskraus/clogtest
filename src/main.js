@@ -1,5 +1,7 @@
 const { createTestInputsAndInput } = require("./prepare-and-run");
 const { runTests, printResults, out } = require("./test-and-report");
+const { appLog } = require("./shared.js");
+const log = appLog.extend("main");
 const SSP = require("simple-string-pattern").default;
 const fs = require("fs/promises");
 
@@ -41,9 +43,10 @@ const writeAssertions = async (fileName) => {
   const content = inputs
     .map((line, index) => {
       let s = line;
+      let lineIndex = index + 1;
       if (
         testInputIndex < testInputs.length &&
-        index + 1 === testInputs[testInputIndex].lineNumber
+        lineIndex === testInputs[testInputIndex].lineNumber
       ) {
         if (testInputs[testInputIndex].expected === "") {
           s =
@@ -53,7 +56,8 @@ const writeAssertions = async (fileName) => {
               .limitPatternLen(MAX_WRITTEN_PATTERN_LENGTH)
               .value();
           assertionsFilledCount++;
-          out(`\t${fileName}:${index + 1}`);
+          log(`write assertion [${lineIndex}] [${s}]`);
+          out(`\t${fileName}:${lineIndex}`);
         }
         testInputIndex++;
       }
