@@ -49,7 +49,7 @@
     "commander": "^12.0.0",
     "console-redirect": "^1.0.0",
     "safe-string-literal": "^1.0.5",
-    "simple-string-pattern": "file:../simple-string-pattern",
+    "simple-string-pattern": "git+https://github.com/tomaskraus/simple-string-pattern",
     "stream-buffers": "^3.0.2"
   }
 }
