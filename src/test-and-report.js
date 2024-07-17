@@ -11,6 +11,8 @@ const MAX_OUTPUT_PATTERN_LENGTH = 60;
 // testResult = { pass: boolean, lineNumber: number, expected: string, received: string }
 
 const testOneItem = ({ lineNumber, expected, received }) => {
+  log(`testOneItem  [${lineNumber}] [${expected}] [${received}]`);
+
   let pass = false;
   let errMsg = undefined;
   try {
