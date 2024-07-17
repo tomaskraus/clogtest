@@ -22,7 +22,9 @@
     "console log",
     "doctest",
     "stdout",
-    "output"
+    "output",
+    "SSP",
+    "simple string pattern"
   ],
   "repository": {
     "type": "git",
@@ -46,7 +48,8 @@
   "dependencies": {
     "commander": "^12.0.0",
     "console-redirect": "^1.0.0",
-    "loose-string-test": "^0.3.0",
+    "safe-string-literal": "^1.0.5",
+    "simple-string-pattern": "file:../simple-string-pattern",
     "stream-buffers": "^3.0.2"
   }
 }

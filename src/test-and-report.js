@@ -1,22 +1,33 @@
-const {
-  looseStringTest,
-  parsePattern,
-  REST_MARK,
-} = require("loose-string-test");
+const SSP = require("simple-string-pattern").default;
 const { appLog } = require("./shared.js");
 const log = appLog.extend("test-and-report");
 const chalk = require("chalk");
+const { escape } = require("safe-string-literal");
 
-const out = console.error;
-
-// testResult = { pass: boolean, lineNumber: number, expected: string, received: string }
+// TestResultType = {
+//   lineNumber: number,
+//   expected: string,
+//   received: string,
+//   pass: boolean,
+//   errMsg?: string,
+// };
 
 const testOneItem = ({ lineNumber, expected, received }) => {
+  log(`testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
+
+  let pass = false;
+  let errMsg = undefined;
+  try {
+    pass = new SSP(expected).test(received);
+  } catch (err) {
+    errMsg = err.message;
+  }
   return {
     lineNumber,
     expected,
     received,
-    pass: looseStringTest(expected, received),
+    pass,
+    errMsg,
   };
 };
 
@@ -31,55 +42,65 @@ const runTests = (testInputs) => {
   return [allResults, allResults.filter((t) => !t.pass)];
 };
 
+// --------------------------------------------------------------
+
+const out = console.error;
+
+const limitAndEscape = (str) => {
+  const MAX_OUTPUT_BODY_LENGTH = 60;
+  const norm = escape(str, "'\"`");
+  return norm.length > MAX_OUTPUT_BODY_LENGTH
+    ? norm.slice(0, MAX_OUTPUT_BODY_LENGTH) + " ..."
+    : norm;
+};
+
 /**
  *
  * @param {[object]} results
  * @param {[object]} fails
  * @param {string} inputFileName
- * @param {[string]} inputLines
+ * @param {[string]} outputLines
  */
-const printResults = (results, fails, inputFileName, inputLines) => {
+const printResults = (results, fails, inputFileName, outputLines) => {
   log(`printResults for file [${inputFileName}]`);
-  fails.map(printFail(inputFileName, inputLines));
+  // console.log("inputLines: ", inputLines);
+  fails.map(printFail(inputFileName, outputLines));
   printResume(fails.length, results.length);
 };
 
 const cerr = chalk.red;
 const cok = chalk.green;
 const csh = chalk.blue;
+const csw = chalk.white.bold;
 
-const printLinesAround = (lines, paddingStr, lineNumber) => {
-  const NUM_LINES_BEFORE = 2;
+const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
+  const NUM_LINES_BEFORE = 3;
   const NUM_LINES_AFTER = 1;
   const start = Math.max(lineNumber - 1 - NUM_LINES_BEFORE, 0);
   const end = Math.min(lineNumber + NUM_LINES_AFTER, lines.length);
 
   for (let i = start; i < end; i++) {
-    out(
-      `${paddingStr}${i + 1 === lineNumber ? ">" : " "}${(i + 1).toString().padStart(5)} | ${lines[i]}`
-    );
+    const isPatternLine = i + 1 === lineNumber;
+    const text = `${paddingStr}${isPatternLine ? ">" : " "}${(i + 1).toString().padStart(5)} | ${lines[i]}`;
+    out(isPatternLine ? csw(text) : text);
   }
 };
 
 const printFail =
-  (inputFileName, inputFileLines) =>
-  ({ lineNumber, expected, received }) => {
-    const exppatt = parsePattern(expected);
-    const recpatt = parsePattern(received);
-    const startMark = exppatt.isExactPattern ? '"' : "";
-    const endMark = exppatt.isStartPattern
-      ? `${startMark}${REST_MARK}`
-      : startMark;
+  (inputFileName, outputLines) =>
+  ({ lineNumber, expected, received, errMsg }) => {
+    if (!errMsg) {
+      const exppatt = new SSP(expected);
 
-    out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-    out(
-      `  Expected: \t${startMark}${cok(exppatt.isExactPattern ? exppatt.body : exppatt.stripped)}${endMark}`
-    );
-    out(
-      `  Received: \t${startMark}${cerr(exppatt.isExactPattern ? recpatt.body : recpatt.stripped)}${startMark}`
-    );
+      out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
+      out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
+      out(`  does not match the output: \t${cerr(limitAndEscape(received))}`);
+    } else {
+      out(`${cerr("!!!")} ${csh(inputFileName + ":" + lineNumber)}`);
+      out(`${cerr("Error")}: ${errMsg}`);
+    }
     out("");
-    printLinesAround(inputFileLines, "    ", lineNumber);
+    printSourceLinesAround(outputLines, "    ", lineNumber);
     out("");
   };
 

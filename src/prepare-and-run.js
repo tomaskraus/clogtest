@@ -45,7 +45,7 @@ const createFileWithInjectedPrints = async (
   const injectedContent = inputFileLines
     .reduce((acc, line) => {
       acc.push(line);
-      if (line.startsWith(testMark)) {
+      if (line.trimStart().startsWith(testMark)) {
         acc.push(`console.log('${testMark}')`);
       }
       return acc;
@@ -98,9 +98,8 @@ const groupOutputByAssertions = (testMarkStr, outputLines) => {
   return groups;
 };
 
-const prepareAssertionStr = (testMarkStr, s) => {
-  const withRestoredEOLs = s.replace(/(\\n)/g, "\n");
-  return withRestoredEOLs.slice(testMarkStr.length).trim();
+const prepareAssertionStr = (testMark, s) => {
+  return s.slice(testMark.length).trim();
 };
 
 /**

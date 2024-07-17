@@ -1,4 +1,4 @@
-const { doTestsAndPrintResults } = require("./main");
+const { doTestsAndPrintResults, writeAssertions } = require("./main");
 
 const { Command } = require("commander");
 
@@ -20,6 +20,23 @@ program
   )
   .action(async (program) => {
     process.exitCode = await doTestsAndPrintResults(program);
+  });
+
+program
+  .command("write")
+  .alias("w")
+  .argument("<program>", "a javascript file with a code to be run")
+  .description(
+    "Runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code."
+  )
+  .addHelpText(
+    "after",
+    `example: 
+    clogtest write ./examples.js
+    `
+  )
+  .action(async (program) => {
+    await writeAssertions(program);
   });
 
 program.parse();

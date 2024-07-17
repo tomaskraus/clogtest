@@ -1,7 +1,7 @@
 ## clogtest
 
 **Console-log-test**, or **clogtest** is a command line application for testing output assertions.  
-It runs a javascript file and tests its standard output againts expected values written in the special comments (`//=>`) in that file.
+It runs a javascript file and tests a match between file's output and patterns written in the special comments (`//=>`) in that file.
 
 _Clogtest's_ main purpose is to test code examples before they're copy-pasted to the documentation.
 
@@ -10,7 +10,7 @@ _Clogtest's_ main purpose is to test code examples before they're copy-pasted to
 ```js
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
 console.log(result);
-//=> [1,4,6 ...
+//=> [1, 2, 3, 4, 5]
 
 console.log("Hello World".substring(5, 7));
 //=> " Wo"
@@ -22,38 +22,43 @@ console.log({}.append);
 //=> null
 ```
 
+Those values in (`//=>`) comments are written using a [Simple string pattern](https://github.com/tomaskraus/simple-string-pattern) (a.k.a. **SSP**) syntax.  
+**SSP** expressions are much simpler to read and write than [Regular expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions).
+
 2. run `clogtest` on it:
 
 ```
 $ npx clogtest test ./examples.js
 ```
 
-3. see the result:
+3. see the test result:
 
 ```
-clogtest ./examples.js
-● ./examples.js:3
-  Expected:     [1,4,6...
-  Received:     [2,4,6,8,10]
+clogtest test: examples.js
+● examples.js:3
+  Pattern:                      [1, 2, 3, 4, 5]
+  does not match the output:    [ 2, 4, 6, 8, 10 ]
 
          1 | const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
          2 | console.log(result);
-    >    3 | //=> [1,4,6 ...
+    >    3 | //=> [1, 2, 3, 4, 5]
          4 |
 
-● ./examples.js:6
-  Expected:     " Wo"
-  Received:     " W"
+● examples.js:6
+  Pattern:                      " Wo"
+  does not match the output:     W
 
+         3 | //=> [1, 2, 3, 4, 5]
          4 |
          5 | console.log("Hello World".substring(5, 7));
     >    6 | //=> " Wo"
          7 |
 
-● ./examples.js:12
-  Expected:     null
-  Received:     undefined
+● examples.js:12
+  Pattern:                      null
+  does not match the output:    undefined
 
+         9 | //=> 2
         10 |
         11 | console.log({}.append);
     >   12 | //=> null
@@ -62,12 +67,14 @@ clogtest ./examples.js
 Tests:  3 failed, 1 passed, 4 total
 ```
 
-4. fix the code in `./examples.js`
+4. fix those faulty (//=>) comments in `./examples.js`
 
 ```js
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
 console.log(result);
-//=> [2,4,6 ...
+// We can use a short notation (...) to write
+// only the part of the expected output
+//=> [ 2, 4, 6, ...
 
 console.log("Hello World".substring(5, 8));
 //=> " Wo"
@@ -82,13 +89,13 @@ console.log({}.append);
 5. run again:
 
 ```
-$ npx clogtest test ./examples.js
+$ npx clogtest test examples.js
 ```
 
-6. view new result:
+6. view the new result:
 
 ```
-clogtest ./examples-ok.js
+clogtest test: examples-ok.js
 Tests:  4 passed, 4 total
 ```
 
@@ -108,4 +115,4 @@ $ npm i -g clogtest
 
 ## How It Works
 
-Someone may find some similarities between _ClogTest_ and Python's [doctest](https://docs.python.org/3/library/doctest.html), but _clogtest_ has a different purpose and different internal workflow.
+Someone may find some similarities between _clogTest_ and Python's [doctest](https://docs.python.org/3/library/doctest.html), but _clogtest_ has a different purpose.
