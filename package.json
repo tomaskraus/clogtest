@@ -22,7 +22,9 @@
     "console log",
     "doctest",
     "stdout",
-    "output"
+    "output",
+    "SSP",
+    "simple string pattern"
   ],
   "repository": {
     "type": "git",
