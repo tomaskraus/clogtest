@@ -5,7 +5,7 @@ It runs a javascript file and tests a match between file's output and patterns w
 
 _Clogtest's_ main purpose is to test code examples before they're copy-pasted to the documentation.
 
-1. having an `examples.js` file:
+1. having an `examples.js` script file, we want to ensure the script prints the desired output:
 
 ```js
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
@@ -28,10 +28,10 @@ Those values in (`//=>`) comments are written using a [Simple string pattern](ht
 2. run `clogtest` on it:
 
 ```
-$ npx clogtest test ./examples.js
+$ npx clogtest test examples.js
 ```
 
-3. see the test result:
+3. see the clogtest's result:
 
 ```
 clogtest test: examples.js
@@ -67,7 +67,9 @@ clogtest test: examples.js
 Tests:  3 failed, 1 passed, 4 total
 ```
 
-4. fix those faulty (//=>) comments in `./examples.js`
+In this case, we decided the script behaves correctly but we made wrong assumtions about its output. Let's fix them manually:
+
+4. fix assertions in `examples.js`
 
 ```js
 const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
@@ -86,7 +88,7 @@ console.log({}.append);
 //=> undefined
 ```
 
-5. run again:
+5. run `clogtest` tool again:
 
 ```
 $ npx clogtest test examples.js
