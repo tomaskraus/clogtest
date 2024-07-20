@@ -1,6 +1,6 @@
 const { createTestInputsAndInput } = require("./prepare-and-run");
 const { runTests, printResults, out } = require("./test-and-report");
-const { appLog } = require("./shared.js");
+const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
 const SSP = require("simple-string-pattern").default;
 const fs = require("fs/promises");
@@ -50,6 +50,7 @@ const writeAssertions = async (fileName) => {
       ) {
         if (testInputs[testInputIndex].expected === "") {
           s =
+            testInputs[testInputIndex].linePadding +
             TEST_MARK +
             " " +
             SSP.parse(testInputs[testInputIndex].received)

@@ -1,5 +1,5 @@
 const SSP = require("simple-string-pattern").default;
-const { appLog } = require("./shared.js");
+const { appLog } = require("./utils.js");
 const log = appLog.extend("test-and-report");
 const chalk = require("chalk");
 const { escape } = require("safe-string-literal");
@@ -12,7 +12,7 @@ const { escape } = require("safe-string-literal");
 //   errMsg?: string,
 // };
 
-const testOneItem = ({ lineNumber, expected, received }) => {
+const testOneItem = ({ lineNumber, linePadding, expected, received }) => {
   log(`testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
 
   let pass = false;

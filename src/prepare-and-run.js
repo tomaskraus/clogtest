@@ -2,7 +2,7 @@
  * prepares the data for tests
  */
 
-const { appLog } = require("./shared.js");
+const { appLog, getPaddingStr } = require("./utils.js");
 const log = appLog.extend("prep-and-run");
 
 const fs = require("fs/promises");
@@ -107,15 +107,16 @@ const prepareAssertionStr = (testMark, s) => {
  * @param {string} testMarkStr
  * @param {[string]} outputGroups
  * @param {[string]} inputFileLines
- * @returns {[object]} [{lineNumber: number, expected: string, received: string}]
+ * @returns {[object]} [{lineNumber: number, linePadding: string, expected: string, received: string}]
  */
 const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
   lineNumber = 1;
   groupIndex = 0;
   const testInputs = inputFileLines
     .map((line) => ({
-      expected: line.trim(),
       lineNumber: lineNumber++,
+      linePadding: getPaddingStr(line),
+      expected: line.trim(),
     }))
     .filter((item) => item.expected.startsWith(testMarkStr))
     .map((item) => ({
