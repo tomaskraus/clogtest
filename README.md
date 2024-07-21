@@ -67,7 +67,7 @@ clogtest test: examples.js
 Tests:  3 failed, 1 passed, 4 total
 ```
 
-In this case, we decided the script behaves correctly but we've made wrong assumtions about its output. Let's fix them manually:
+In this case, we decided the script behaves correctly but we've made wrong assumptions about its output. Let's fix them manually:
 
 4. fix assertions in `examples.js`
 
