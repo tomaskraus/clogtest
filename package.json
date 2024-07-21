@@ -50,6 +50,7 @@
     "console-redirect": "^1.0.0",
     "safe-string-literal": "^1.0.5",
     "simple-string-pattern": "git+https://github.com/tomaskraus/simple-string-pattern",
+    "stateful-predicates": "^1.0.2",
     "stream-buffers": "^3.0.2"
   }
 }

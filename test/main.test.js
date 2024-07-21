@@ -35,4 +35,17 @@ describe("normal ops", () => {
     expect(fails.length).toEqual(1);
     expect(fails[0].pass).toBeFalsy();
   });
+
+  test("Fully block-commented code means empty results", async () => {
+    const [results, fails] = await doTests("./test/inputs/comment-all.js");
+    expect(results.length).toEqual(0);
+  });
+
+  test("Assertions inside block comments are not tested", async () => {
+    const [results, fails] = await doTests("./test/inputs/comments.js");
+    expect(results.length).toEqual(3);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].pass).toBeFalsy();
+    expect(results[2].pass).toBeTruthy();
+  });
 });

@@ -8,6 +8,8 @@ const log = appLog.extend("prep-and-run");
 const fs = require("fs/promises");
 const Path = require("path");
 
+const { switchTrueFalse, nthElementAfter } = require("stateful-predicates");
+
 window = {}; // NodeJS hack for console-redirect
 const redirect = require("console-redirect");
 const streamBuffers = require("stream-buffers");
@@ -23,6 +25,12 @@ const loadInputFile = async (fileName) => {
   const data = await fs.readFile(fileName, { encoding: "utf-8" });
   return data.split("\n");
 };
+
+const createBlockCommentPredicate = () =>
+  switchTrueFalse(
+    (s) => s.trimStart().startsWith("/*"),
+    nthElementAfter(1, (s) => s.trimEnd().endsWith("*/"))
+  );
 
 /**
  *
@@ -42,11 +50,15 @@ const createFileWithInjectedPrints = async (
   );
   log(`creating injected file [${injectedFileName}]`);
 
+  const isInBlockComment = createBlockCommentPredicate();
+
   const injectedContent = inputFileLines
     .reduce((acc, line) => {
-      acc.push(line);
-      if (line.trimStart().startsWith(testMark)) {
-        acc.push(`console.log('${testMark}')`);
+      if (!isInBlockComment(line)) {
+        acc.push(line);
+        if (line.trimStart().startsWith(testMark)) {
+          acc.push(`console.log('${testMark}')`);
+        }
       }
       return acc;
     }, [])
@@ -72,8 +84,9 @@ const runFileAndGatherOutputLines = (fileName) => {
     myConsole.release();
     buff.end();
   }
-  log(`runFile output size [${buff.size()}]`);
-  return (buff.getContentsAsString() || "").split("\n");
+  const outputLines = (buff.getContentsAsString() || "").split("\n");
+  log(`runFileAndGatherOutputLines: [${outputLines.length}] lines`);
+  return outputLines;
 };
 
 /**
@@ -112,13 +125,18 @@ const prepareAssertionStr = (testMark, s) => {
 const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
   lineNumber = 1;
   groupIndex = 0;
+  const isInCommentBlock = createBlockCommentPredicate();
   const testInputs = inputFileLines
     .map((line) => ({
       lineNumber: lineNumber++,
       linePadding: getPaddingStr(line),
       expected: line.trim(),
     }))
-    .filter((item) => item.expected.startsWith(testMarkStr))
+    .filter(
+      (item) =>
+        !isInCommentBlock(item.expected) &&
+        item.expected.startsWith(testMarkStr)
+    )
     .map((item) => ({
       ...item,
       expected: prepareAssertionStr(testMarkStr, item.expected),
@@ -148,10 +166,5 @@ const createTestInputsAndInput = async (testMarkStr, fileName) => {
 };
 
 module.exports = {
-  loadInputFile,
-  createFileWithInjectedPrints,
-  runFileAndGatherOutput: runFileAndGatherOutputLines,
-  groupOutputByAssertions,
-  createTestInputs,
   createTestInputsAndInput,
 };
