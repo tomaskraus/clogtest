@@ -1,42 +1,69 @@
 const { doTestsAndPrintResults, writeAssertions } = require("./main");
 
-const { Command } = require("commander");
+const { Command, createOption } = require("commander");
 
 const program = new Command();
 program.name("clogtest").showHelpAfterError();
 
+const Path = require("path");
+const getJsFileName = (fileName, jsDir = ".") => {
+  const extName = Path.extname(fileName);
+  if (extName !== ".js") {
+    return Path.join(jsDir, fileName.slice(0, -extName.length) + ".js");
+  }
+  return fileName;
+};
+const getSourceFileName = (fileName) =>
+  !fileName.endsWith(".js") ? fileName : null;
+
+const jsDirOption = createOption(
+  "-j, --jsDir <dirName>",
+  "directory of source's generated javascript file"
+).default("dist");
+
 program
   .command("test")
   .alias("t")
-  .argument("<program>", "a javascript file with a code to be run")
+  .argument("<source>", "source file with a code to be run")
+  .addOption(jsDirOption)
   .description(
-    "Tests program's output against program's assertion comment's values."
+    "Tests program's output against assertions comments (//=>) written in the program's source."
   )
   .addHelpText(
     "after",
     `example: 
     clogtest test ./examples.js
+    clogtest test --jsDir dist ./examples/ts-example.ts
+
     `
   )
-  .action(async (program) => {
-    process.exitCode = await doTestsAndPrintResults(program);
+  .action(async (source, options) => {
+    process.exitCode = await doTestsAndPrintResults(
+      getJsFileName(source, options.jsDir),
+      getSourceFileName(source)
+    );
   });
 
 program
   .command("write")
   .alias("w")
-  .argument("<program>", "a javascript file with a code to be run")
+  .argument("<source>", "a javascript file with a code to be run")
+  .addOption(jsDirOption)
   .description(
-    "Runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code."
+    "Runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code source."
   )
   .addHelpText(
     "after",
     `example: 
     clogtest write ./examples.js
+    clogtest write --jsDir dist ./examples/ts-example.ts
     `
   )
-  .action(async (program) => {
-    await writeAssertions(program);
+  .action(async (source, options) => {
+    await writeAssertions(
+      getJsFileName(source, options.jsDir),
+      getSourceFileName(source)
+    );
   });
 
 program.parse();

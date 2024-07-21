@@ -15,27 +15,39 @@ const printHeader = (action, fileName) => {
   out(`${appName} ${action}: ${fileName}`);
 };
 
-const doTests = async (fileName) => {
-  const [testInputs] = await createTestInputsAndInput(TEST_MARK, fileName);
+/**
+ *
+ * @param {string} fileName
+ * @param {string | null} tsFileName
+ * @returns
+ */
+const doTests = async (fileName, tsFileName = null) => {
+  const [testInputs] = await createTestInputsAndInput(
+    TEST_MARK,
+    fileName,
+    tsFileName
+  );
   return runTests(testInputs);
 };
 
-const doTestsAndPrintResults = async (fileName) => {
-  printHeader("test", fileName);
+const doTestsAndPrintResults = async (fileName, tsFileName = null) => {
+  printHeader("test", tsFileName || fileName);
   const [testInputs, inputs] = await createTestInputsAndInput(
     TEST_MARK,
-    fileName
+    fileName,
+    tsFileName
   );
   const [allResults, fails] = runTests(testInputs);
-  printResults(allResults, fails, fileName, inputs);
+  printResults(allResults, fails, tsFileName || fileName, inputs);
   return fails.length === 0 ? 0 : 1;
 };
 
-const writeAssertions = async (fileName) => {
+const writeAssertions = async (fileName, tsFileName = null) => {
   printHeader("write-assertions", fileName);
   const [testInputs, inputs] = await createTestInputsAndInput(
     TEST_MARK,
-    fileName
+    fileName,
+    tsFileName
   );
   let testInputIndex = 0;
   let assertionsFilledCount = 0;
@@ -66,7 +78,7 @@ const writeAssertions = async (fileName) => {
     })
     .join("\n");
   if (assertionsFilledCount > 0) {
-    await fs.writeFile(fileName, content);
+    await fs.writeFile(tsFileName || fileName, content);
   }
   out(`${assertionsFilledCount} assertion comment(s) filled`);
 };

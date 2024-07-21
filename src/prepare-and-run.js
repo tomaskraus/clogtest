@@ -150,10 +150,16 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
  *
  * @param {string} testMarkStr
  * @param {string} fileName
+ * @param {string?} tsFileName
  * @returns {Promise<[[object], [string]]>}
  */
-const createTestInputsAndInput = async (testMarkStr, fileName) => {
+const createTestInputsAndInput = async (testMarkStr, fileName, tsFileName) => {
   const input = await loadInputFile(fileName);
+  let tsInput = null;
+  if (tsFileName) {
+    log("createTestInputsAndInput: typeScript file requested:");
+    tsInput = await loadInputFile(tsFileName);
+  }
   const injectedFileName = await createFileWithInjectedPrints(
     testMarkStr,
     fileName,
@@ -161,8 +167,9 @@ const createTestInputsAndInput = async (testMarkStr, fileName) => {
   );
   const output = runFileAndGatherOutputLines(injectedFileName);
   const groups = groupOutputByAssertions(testMarkStr, output);
-  const testInputs = createTestInputs(testMarkStr, groups, input);
-  return [testInputs, input];
+  const finalInput = tsInput || input;
+  const testInputs = createTestInputs(testMarkStr, groups, finalInput);
+  return [testInputs, finalInput];
 };
 
 module.exports = {

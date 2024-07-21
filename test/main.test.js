@@ -49,3 +49,16 @@ describe("normal ops", () => {
     expect(results[2].pass).toBeTruthy();
   });
 });
+
+describe("TypeScript", () => {
+  test("Can test typescript files:", async () => {
+    const [results, fails] = await doTests(
+      "./dist/test/inputs/ts-input.js",
+      "./test/inputs/ts-input.ts"
+    );
+    expect(results.length).toEqual(2);
+    expect(results[0].expected).toEqual("1");
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].pass).toBeTruthy();
+  });
+});
