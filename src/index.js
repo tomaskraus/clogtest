@@ -1,9 +1,6 @@
 const { doTestsAndPrintResults, writeAssertions } = require("./main");
-
+const { safeRunner } = require("./utils");
 const { Command, createOption } = require("commander");
-
-const program = new Command();
-program.name("clogtest").showHelpAfterError();
 
 const Path = require("path");
 const getJsFileName = (fileName, jsDir = ".") => {
@@ -13,8 +10,14 @@ const getJsFileName = (fileName, jsDir = ".") => {
   }
   return fileName;
 };
+
 const getSourceFileName = (fileName) =>
   !fileName.endsWith(".js") ? fileName : null;
+
+// ---------------------------------------------------------------
+
+const program = new Command();
+program.name("clogtest").showHelpAfterError();
 
 const jsDirOption = createOption(
   "-j, --jsDir <dirName>",
@@ -38,9 +41,12 @@ program
     `
   )
   .action(async (source, options) => {
-    process.exitCode = await doTestsAndPrintResults(
-      getJsFileName(source, options.jsDir),
-      getSourceFileName(source)
+    process.exitCode = await safeRunner(
+      async () =>
+        await doTestsAndPrintResults(
+          getJsFileName(source, options.jsDir),
+          getSourceFileName(source)
+        )
     );
   });
 
@@ -60,9 +66,12 @@ program
     `
   )
   .action(async (source, options) => {
-    await writeAssertions(
-      getJsFileName(source, options.jsDir),
-      getSourceFileName(source)
+    process.exitCode = await safeRunner(
+      async () =>
+        await writeAssertions(
+          getJsFileName(source, options.jsDir),
+          getSourceFileName(source)
+        )
     );
   });
 
