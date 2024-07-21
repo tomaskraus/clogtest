@@ -156,20 +156,29 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
 const createTestInputsAndInput = async (testMarkStr, fileName, tsFileName) => {
   const input = await loadInputFile(fileName);
   let tsInput = null;
+  let injectedFileName = null;
   if (tsFileName) {
     log("createTestInputsAndInput: typeScript file requested:");
     tsInput = await loadInputFile(tsFileName);
   }
-  const injectedFileName = await createFileWithInjectedPrints(
-    testMarkStr,
-    fileName,
-    input
-  );
-  const output = runFileAndGatherOutputLines(injectedFileName);
-  const groups = groupOutputByAssertions(testMarkStr, output);
-  const finalInput = tsInput || input;
-  const testInputs = createTestInputs(testMarkStr, groups, finalInput);
-  return [testInputs, finalInput];
+  try {
+    injectedFileName = await createFileWithInjectedPrints(
+      testMarkStr,
+      fileName,
+      input
+    );
+    const output = runFileAndGatherOutputLines(injectedFileName);
+    const groups = groupOutputByAssertions(testMarkStr, output);
+    const finalInput = tsInput || input;
+    const testInputs = createTestInputs(testMarkStr, groups, finalInput);
+    return [testInputs, finalInput];
+  } finally {
+    if (injectedFileName) {
+      log(`createTestInputsAndInput: Deleting [${injectedFileName}]`);
+      await fs.rm(injectedFileName);
+      log(`createTestInputsAndInput: [${injectedFileName}] ...deleted`);
+    }
+  }
 };
 
 module.exports = {
