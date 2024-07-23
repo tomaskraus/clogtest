@@ -14,4 +14,13 @@
 
   console.log(inverse(3));
   //=> 0.3
+
+  try {
+    console.log(inverse(0));
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err.message);
+      //=> ... zero ...
+    }
+  }
 }
