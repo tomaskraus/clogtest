@@ -17,11 +17,13 @@ describe("normal ops", () => {
   test("empty input means empty results", async () => {
     const [results, fails] = await doTests("./test/inputs/empty.js");
     expect(results.length).toEqual(0);
+    expect(fails.length).toEqual(0);
   });
 
   test("input with no assertions means empty results", async () => {
     const [results, fails] = await doTests("./test/inputs/no-assertions.js");
     expect(results.length).toEqual(0);
+    expect(fails.length).toEqual(0);
   });
 
   test("input with two assertions means two results", async () => {
@@ -39,6 +41,7 @@ describe("normal ops", () => {
   test("Fully block-commented code means empty results", async () => {
     const [results, fails] = await doTests("./test/inputs/comment-all.js");
     expect(results.length).toEqual(0);
+    expect(fails.length).toEqual(0);
   });
 
   test("Assertions inside block comments are not tested", async () => {
@@ -47,6 +50,8 @@ describe("normal ops", () => {
     expect(results[0].pass).toBeTruthy();
     expect(results[1].pass).toBeFalsy();
     expect(results[2].pass).toBeTruthy();
+    expect(fails.length).toEqual(1);
+    expect(fails[0].pass).toBeFalsy();
   });
 });
 
