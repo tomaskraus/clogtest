@@ -74,16 +74,30 @@ describe("normal ops", () => {
   });
 });
 
+describe("error ops", () => {
+  test("Two consecutive assertions (i.e. without any output between them) are left unnoticed if there are some ececutable code lines between them.", async () => {
+    const [results, fails] = await doTests(
+      "./test/inputs/err-consecutive-assertions-unnoticed.js"
+    );
+    expect(results.length).toEqual(3);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].expected).toEqual('""');
+    expect(results[1].pass).toBeTruthy();
+    expect(results[2].pass).toBeTruthy();
+  });
+});
+
 describe("TypeScript", () => {
   test("Can test typescript files:", async () => {
     const [results, fails] = await doTests(
       "./dist/test/inputs/ts-input.js",
       "./test/inputs/ts-input.ts"
     );
-    expect(results.length).toEqual(2);
+    expect(results.length).toEqual(3);
     expect(results[0].expected).toEqual("1");
     expect(results[0].pass).toBeTruthy();
     expect(results[1].pass).toBeFalsy();
+    expect(results[2].pass).toBeTruthy();
     expect(fails.length).toEqual(1);
     expect(fails[0].pass).toBeFalsy();
   });
