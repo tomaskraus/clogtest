@@ -9,9 +9,9 @@
   console.log(inverse(1));
   //=> 1
 
-  // console.log(inverse(4));
-  // //=> 0.25
+  //console.log(inverse(4));
+  ////=> 0.25
 
   console.log(inverse(3));
-  //=> 0.33 ...
+  //=> 0.3
 }

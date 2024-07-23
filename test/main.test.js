@@ -73,6 +73,8 @@ describe("TypeScript", () => {
     expect(results.length).toEqual(2);
     expect(results[0].expected).toEqual("1");
     expect(results[0].pass).toBeTruthy();
-    expect(results[1].pass).toBeTruthy();
+    expect(results[1].pass).toBeFalsy();
+    expect(fails.length).toEqual(1);
+    expect(fails[0].pass).toBeFalsy();
   });
 });
