@@ -12,8 +12,8 @@ const { escape } = require("safe-string-literal");
 //   errMsg?: string,
 // };
 
-const testOneItem = ({ lineNumber, linePadding, expected, received }) => {
-  log(`testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
+const testOneItem = ({ lineNumber, expected, received }) => {
+  log(`  testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
 
   let pass = false;
   let errMsg = undefined;
@@ -39,7 +39,9 @@ const testOneItem = ({ lineNumber, linePadding, expected, received }) => {
 const runTests = (testInputs) => {
   log(`runTests running [${testInputs.length}] test(s)`);
   const allResults = testInputs.map(testOneItem);
-  return [allResults, allResults.filter((t) => !t.pass)];
+  const fails = allResults.filter((t) => !t.pass);
+  log(`Results: all [${allResults.length}], fails [${fails.length}]`);
+  return [allResults, fails];
 };
 
 // --------------------------------------------------------------
