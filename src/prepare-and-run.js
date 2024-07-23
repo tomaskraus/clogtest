@@ -39,7 +39,7 @@ const createBlockCommentPredicate = () =>
  * @param {[string]} inputFileLines
  * @returns {Promise<string>} a name of a newly created file
  */
-const createFileWithInjectedPrints = async (
+const createFileWithInjectedAssertionPrints = async (
   testMark,
   inputFileName,
   inputFileLines
@@ -73,7 +73,7 @@ const createFileWithInjectedPrints = async (
  * @param {string} fileName
  * @returns {[string]}
  */
-const runFileAndGatherOutputLines = (fileName) => {
+const runSourceAndGatherOutputLines = (fileName) => {
   log(`runFile [${fileName}]`);
   const buff = new streamBuffers.WritableStreamBuffer();
   const myConsole = redirect(buff, process.stderr, true);
@@ -153,34 +153,34 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
  * @param {string?} tsFileName
  * @returns {Promise<[[object], [string]]>}
  */
-const createTestInputsAndInput = async (testMarkStr, fileName, tsFileName) => {
+const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
   const input = await loadInputFile(fileName);
   let tsInput = null;
-  let injectedFileName = null;
+  let voidAssertionInjectedFileName = null;
   if (tsFileName) {
-    log("createTestInputsAndInput: typeScript file requested:");
+    log(`typeScript file requested: [${tsFileName}]`);
     tsInput = await loadInputFile(tsFileName);
   }
   try {
-    injectedFileName = await createFileWithInjectedPrints(
+    voidAssertionInjectedFileName = await createFileWithInjectedAssertionPrints(
       testMarkStr,
       fileName,
       input
     );
-    const output = runFileAndGatherOutputLines(injectedFileName);
+    const output = runSourceAndGatherOutputLines(voidAssertionInjectedFileName);
     const groups = groupOutputByAssertions(testMarkStr, output);
-    const finalInput = tsInput || input;
-    const testInputs = createTestInputs(testMarkStr, groups, finalInput);
-    return [testInputs, finalInput];
+    const source = tsInput || input;
+    const testInputs = createTestInputs(testMarkStr, groups, source);
+    return [testInputs, source];
   } finally {
-    if (injectedFileName) {
-      log(`createTestInputsAndInput: Deleting [${injectedFileName}]`);
-      await fs.rm(injectedFileName);
-      log(`createTestInputsAndInput: [${injectedFileName}] ...deleted`);
+    if (voidAssertionInjectedFileName) {
+      log(`deleting [${voidAssertionInjectedFileName}] ...`);
+      await fs.rm(voidAssertionInjectedFileName);
+      log(`... deleted: [${voidAssertionInjectedFileName}]`);
     }
   }
 };
 
 module.exports = {
-  createTestInputsAndInput,
+  getTestInputAndSource,
 };

@@ -1,4 +1,4 @@
-const { createTestInputsAndInput } = require("./prepare-and-run");
+const { getTestInputAndSource } = require("./prepare-and-run");
 const { runTests, printResults, out } = require("./test-and-report");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
@@ -22,7 +22,7 @@ const printHeader = (action, fileName) => {
  * @returns
  */
 const doTests = async (fileName, tsFileName = null) => {
-  const [testInputs] = await createTestInputsAndInput(
+  const [testInputs] = await getTestInputAndSource(
     TEST_MARK,
     fileName,
     tsFileName
@@ -32,19 +32,19 @@ const doTests = async (fileName, tsFileName = null) => {
 
 const doTestsAndPrintResults = async (fileName, tsFileName = null) => {
   printHeader("test", tsFileName || fileName);
-  const [testInputs, inputs] = await createTestInputsAndInput(
+  const [testInputs, source] = await getTestInputAndSource(
     TEST_MARK,
     fileName,
     tsFileName
   );
   const [allResults, fails] = runTests(testInputs);
-  printResults(allResults, fails, tsFileName || fileName, inputs);
+  printResults(allResults, fails, tsFileName || fileName, source);
   return fails.length === 0 ? 0 : 1;
 };
 
 const writeAssertions = async (fileName, tsFileName = null) => {
   printHeader("write-assertions", fileName);
-  const [testInputs, inputs] = await createTestInputsAndInput(
+  const [testInputs, inputs] = await getTestInputAndSource(
     TEST_MARK,
     fileName,
     tsFileName
