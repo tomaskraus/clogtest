@@ -44,6 +44,16 @@ describe("normal ops", () => {
     expect(fails.length).toEqual(0);
   });
 
+  test("Empty output assertion works", async () => {
+    const [results, fails] = await doTests(
+      "./test/inputs/empty-output-assertion.js"
+    );
+    expect(results.length).toEqual(2);
+    expect(fails.length).toEqual(0);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].pass).toBeTruthy();
+  });
+
   test("Assertions inside block comments are not tested", async () => {
     const [results, fails] = await doTests("./test/inputs/comments.js");
     expect(results.length).toEqual(3);
