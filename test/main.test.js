@@ -53,6 +53,15 @@ describe("normal ops", () => {
     expect(fails.length).toEqual(1);
     expect(fails[0].pass).toBeFalsy();
   });
+
+  test("Empty Assertion fails.", async () => {
+    const [results, fails] = await doTests("./test/inputs/empty-assertion.js");
+    expect(results.length).toEqual(2);
+    expect(results[0].pass).toBeFalsy();
+    expect(results[1].pass).toBeTruthy();
+    expect(fails.length).toEqual(1);
+    expect(fails[0].pass).toBeFalsy();
+  });
 });
 
 describe("TypeScript", () => {
