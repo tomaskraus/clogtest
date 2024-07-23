@@ -140,7 +140,7 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
     .map((item) => ({
       ...item,
       expected: prepareAssertionStr(testMarkStr, item.expected),
-      received: outputGroups[groupIndex++] || "",
+      received: outputGroups[groupIndex++], // groups are as many as testMarks
     }));
   log(`testInput item count [${testInputs.length}]`);
   return testInputs;
