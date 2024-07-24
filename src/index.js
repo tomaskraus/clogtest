@@ -1,7 +1,9 @@
 const { doTestsAndPrintResults, writeAssertions } = require("./main");
 const { Command, createOption } = require("commander");
-
 const Path = require("path");
+
+// ------------------------------------------
+
 const getJsFileName = (fileName, jsDir = ".") => {
   const extName = Path.extname(fileName);
   if (extName !== ".js") {
@@ -12,8 +14,6 @@ const getJsFileName = (fileName, jsDir = ".") => {
 
 const getSourceFileName = (fileName) =>
   !fileName.endsWith(".js") ? fileName : null;
-
-// ------------------------------------------
 
 const safeRunner = async (asyncFn) => {
   const DEFAULT_RET_CODE = 1;
