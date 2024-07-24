@@ -1,8 +1,8 @@
-const SSP = require("simple-string-pattern").default;
 const { appLog } = require("./utils.js");
-const log = appLog.extend("test-and-report");
+const log = appLog.extend("report");
 const chalk = require("chalk");
 const { escape } = require("safe-string-literal");
+const SSP = require("simple-string-pattern").default;
 
 // TestResultType = {
 //   lineNumber: number,
@@ -11,38 +11,6 @@ const { escape } = require("safe-string-literal");
 //   pass: boolean,
 //   errMsg?: string,
 // };
-
-const testOneItem = ({ lineNumber, expected, received }) => {
-  log(`  testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
-
-  let pass = false;
-  let errMsg = undefined;
-  try {
-    pass = new SSP(expected).test(received);
-  } catch (err) {
-    errMsg = err.message;
-  }
-  return {
-    lineNumber,
-    expected,
-    received,
-    pass,
-    errMsg,
-  };
-};
-
-/**
- *
- * @param {[object]} testInputs [{lineNumber: number, expected: string, received: string, pass: boolean}]
- * @returns
- */
-const runTests = (testInputs) => {
-  log(`runTests running [${testInputs.length}] test(s)`);
-  const allResults = testInputs.map(testOneItem);
-  const fails = allResults.filter((t) => !t.pass);
-  log(`Results: all [${allResults.length}], fails [${fails.length}]`);
-  return [allResults, fails];
-};
 
 // --------------------------------------------------------------
 
@@ -120,7 +88,6 @@ const printResume = (numberOfFails, numberTotal) => {
 };
 
 module.exports = {
-  runTests,
   printResults,
   out,
 };

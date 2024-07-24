@@ -1,5 +1,4 @@
 const { doTestsAndPrintResults, writeAssertions } = require("./main");
-const { safeRunner } = require("./utils");
 const { Command, createOption } = require("commander");
 
 const Path = require("path");
@@ -13,6 +12,20 @@ const getJsFileName = (fileName, jsDir = ".") => {
 
 const getSourceFileName = (fileName) =>
   !fileName.endsWith(".js") ? fileName : null;
+
+// ------------------------------------------
+
+const safeRunner = async (asyncFn) => {
+  const DEFAULT_RET_CODE = 1;
+  try {
+    const result = await asyncFn();
+    return result;
+  } catch (err) {
+    const err2 = new Error(err.message, { cause: err });
+    console.log(err2);
+    return err2.cause.errno || DEFAULT_RET_CODE;
+  }
+};
 
 // ---------------------------------------------------------------
 

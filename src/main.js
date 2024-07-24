@@ -1,5 +1,5 @@
-const { getTestInputAndSource } = require("./prepare-and-run");
-const { runTests, printResults, out } = require("./test-and-report");
+const { getTestInputAndSource, runTests } = require("./core.js");
+const { printResults, out } = require("./report.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
 const SSP = require("simple-string-pattern").default;
@@ -29,6 +29,8 @@ const doTests = async (fileName, tsFileName = null) => {
   );
   return runTests(testInputs);
 };
+
+// ------------------
 
 const doTestsAndPrintResults = async (fileName, tsFileName = null) => {
   printHeader("test", tsFileName || fileName);

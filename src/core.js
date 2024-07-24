@@ -3,7 +3,7 @@
  */
 
 const { appLog, getPaddingStr } = require("./utils.js");
-const log = appLog.extend("prep-and-run");
+const log = appLog.extend("core");
 
 const fs = require("fs/promises");
 const Path = require("path");
@@ -14,6 +14,7 @@ window = {}; // NodeJS hack for console-redirect
 const redirect = require("console-redirect");
 const streamBuffers = require("stream-buffers");
 const process = require("node:process");
+const SSP = require("simple-string-pattern").default;
 
 /**
  *
@@ -181,6 +182,41 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
   }
 };
 
+// ----------------------------------------------------------------
+
+const testOneItem = ({ lineNumber, expected, received }) => {
+  log(`  testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
+
+  let pass = false;
+  let errMsg = undefined;
+  try {
+    pass = new SSP(expected).test(received);
+  } catch (err) {
+    errMsg = err.message;
+  }
+  return {
+    lineNumber,
+    expected,
+    received,
+    pass,
+    errMsg,
+  };
+};
+
+/**
+ *
+ * @param {[object]} testInputs [{lineNumber: number, expected: string, received: string, pass: boolean}]
+ * @returns
+ */
+const runTests = (testInputs) => {
+  log(`runTests running [${testInputs.length}] test(s)`);
+  const allResults = testInputs.map(testOneItem);
+  const fails = allResults.filter((t) => !t.pass);
+  log(`Results: all [${allResults.length}], fails [${fails.length}]`);
+  return [allResults, fails];
+};
+
 module.exports = {
   getTestInputAndSource,
+  runTests,
 };
