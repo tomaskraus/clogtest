@@ -134,3 +134,13 @@ describe("Custom test mark:", () => {
     expect(fails.length).toEqual(0);
   });
 });
+
+// -------------------------------------------
+
+describe("Engine failures:", () => {
+  test("Throws Error if syntactically invalid javascript file is passed:", async () => {
+    await expect(() =>
+      doTests("./test/inputs/invalid-source.js")
+    ).rejects.toThrow(/Missing semicolon/);
+  });
+});
