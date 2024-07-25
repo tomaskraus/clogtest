@@ -53,7 +53,7 @@ const writeAssertions =
           if (testInputs[testInputIndex].expected === "") {
             s =
               testInputs[testInputIndex].linePadding +
-              TEST_MARK +
+              testMark +
               " " +
               SSP.parse(testInputs[testInputIndex].received)
                 .limitPatternLen(MAX_WRITTEN_PATTERN_LENGTH)
