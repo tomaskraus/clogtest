@@ -1,5 +1,5 @@
 /**
- * prepares the data for tests
+ * Building blocks for ClogTest API
  */
 
 const { appLog, getPaddingStr } = require("./utils.js");
