@@ -13,7 +13,7 @@ const SSP = require("simple-string-pattern").default;
  *
  * @param {string} fileName
  * @param {string | null} tsFileName
- * @returns
+ * @returns {[testResults[], testResults[],string[]]}
  */
 const doTests =
   (testMark) =>
