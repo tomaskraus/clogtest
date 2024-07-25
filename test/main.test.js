@@ -1,6 +1,6 @@
 // const mock = require("mock-fs");
 
-const { doTests } = require("../src/main");
+const { doTests } = require("../src/engine");
 
 // beforeEach(() => {
 //   mock({
