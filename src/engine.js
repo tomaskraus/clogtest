@@ -17,6 +17,12 @@ const SSP = require("simple-string-pattern").default;
  */
 const doTests =
   (testMark) =>
+  /**
+   * Performs tests.
+   * @param {string} fileName
+   * @param {string} tsFileName
+   * @returns {[testResults[], testResults[],string[]]} [all results, failures, source content]
+   */
   async (fileName, tsFileName = null) => {
     const [testInputs, source] = await getTestInputAndSource(
       testMark,
@@ -29,6 +35,13 @@ const doTests =
 
 const writeAssertions =
   (testMark) =>
+  /**
+   * Fills empty assertions with received output values.
+   * @param {string} fileName
+   * @param {string} tsFileName
+   * @param {*} onTestMarkFn callback function (srcFileName, lineNumber, line): void. called on every testMark line
+   * @returns {number} number of assertions filled.
+   */
   async (fileName, tsFileName = null, onTestMarkFn) => {
     const MAX_WRITTEN_PATTERN_LENGTH = 20;
 
@@ -81,7 +94,20 @@ const DEFAULT_TEST_MARK = "//=>";
 module.exports = (testMark = DEFAULT_TEST_MARK) => {
   log(`Engine created with testMark: [${testMark}]`);
   return {
+    /**
+     * Performs tests.
+     * @param {string} fileName
+     * @param {string} tsFileName
+     * @returns {[testResults[], testResults[],string[]]} [all results, failures, source content]
+     */
     doTests: doTests(testMark),
+    /**
+     * Fills empty assertions with received output values.
+     * @param {string} fileName
+     * @param {string} tsFileName
+     * @param {*} onTestMarkFn callback function (srcFileName, lineNumber, line): void. called on every testMark line
+     * @returns {number} number of assertions filled.
+     */
     writeAssertions: writeAssertions(testMark),
   };
 };
