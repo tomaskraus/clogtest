@@ -75,9 +75,13 @@ const writeAssertions =
   };
 
 // ------------------------------------------------
-const TEST_MARK = "//=>";
+const DEFAULT_TEST_MARK = "//=>";
 
-module.exports = {
-  doTests: doTests(TEST_MARK),
-  writeAssertions: writeAssertions(TEST_MARK),
+// do not use trailing or leading spaces in testMark
+module.exports = (testMark = DEFAULT_TEST_MARK) => {
+  log(`Engine created with testMark: [${testMark}]`);
+  return {
+    doTests: doTests(testMark),
+    writeAssertions: writeAssertions(testMark),
+  };
 };

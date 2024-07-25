@@ -1,4 +1,4 @@
-const engine = require("./engine.js");
+const engine = require("./engine.js")();
 const { printResults, out } = require("./report.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");

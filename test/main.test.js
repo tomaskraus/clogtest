@@ -1,6 +1,8 @@
 // const mock = require("mock-fs");
 
-const { doTests } = require("../src/engine");
+const engineFn = require("../src/engine");
+
+const { doTests } = engineFn();
 
 // beforeEach(() => {
 //   mock({
@@ -100,5 +102,35 @@ describe("TypeScript", () => {
     expect(results[2].pass).toBeTruthy();
     expect(fails.length).toEqual(1);
     expect(fails[0].pass).toBeFalsy();
+  });
+});
+
+// -------------------------------------------
+
+describe("Custom test mark:", () => {
+  const { doTests } = engineFn("// Expected output:");
+
+  test("Works with custom test mark", async () => {
+    const [results, fails] = await doTests("./test/inputs/custom-test-mark.js");
+    expect(results.length).toEqual(8);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].pass).toBeTruthy();
+    expect(results[2].pass).toBeTruthy();
+    expect(results[3].pass).toBeTruthy();
+    expect(results[4].pass).toBeTruthy();
+    expect(results[5].pass).toBeTruthy();
+    expect(results[6].pass).toBeFalsy();
+    expect(results[7].pass).toBeTruthy();
+
+    expect(fails.length).toEqual(1);
+    expect(fails[0].pass).toBeFalsy();
+  });
+
+  test("Recognizes only custom test marks in the input", async () => {
+    const [results, fails] = await doTests(
+      "./test/inputs/one-true-one-false.js"
+    );
+    expect(results.length).toEqual(0);
+    expect(fails.length).toEqual(0);
   });
 });
