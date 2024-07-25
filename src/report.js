@@ -36,6 +36,7 @@ const printResults = (results, fails, inputFileName, outputLines) => {
   // console.log("inputLines: ", inputLines);
   fails.map(printFail(inputFileName, outputLines));
   printResume(fails.length, results.length);
+  log(`printResults END`);
 };
 
 const cerr = chalk.red;
@@ -75,6 +76,8 @@ const printFail =
   };
 
 const printResume = (numberOfFails, numberTotal) => {
+  log(`printResume:`);
+
   let str = `${numberTotal} total`;
   const numberOfPassed = numberTotal - numberOfFails;
   if (numberOfPassed > 0) {
@@ -85,6 +88,7 @@ const printResume = (numberOfFails, numberTotal) => {
   }
 
   out(`Tests: \t${str}`);
+  log(`printResume: END`);
 };
 
 module.exports = {
