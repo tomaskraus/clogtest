@@ -1,7 +1,12 @@
+/**
+ * A facade that provides business logic for a CLI.
+ */
+
 const engine = require("./engine.js")();
 const { printResults, out } = require("./report.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
+const fs = require("fs/promises");
 
 const appName = require("../package.json").name;
 
@@ -31,12 +36,16 @@ const writeAssertions = async (fileName, tsFileName = null) => {
 
   const sourceFileName = tsFileName || fileName;
   printHeader("write-assertions: ", sourceFileName);
-  const assertionsFilledCount = await engine.writeAssertions(
+  const [content, assertionsFilledCount] = await engine.writeAssertions(
     fileName,
     tsFileName,
     printLineHandler
   );
   out(`${assertionsFilledCount} assertion comment(s) filled`);
+  if (assertionsFilledCount > 0) {
+    log(`Writing filled assertions to [${tsFileName || fileName}]`);
+    await fs.writeFile(tsFileName || fileName, content);
+  }
   log(`writeAssertions: END - - - - -`);
 };
 

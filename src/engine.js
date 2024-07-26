@@ -4,7 +4,6 @@
 
 const { appLog } = require("./utils.js");
 const log = appLog.extend("engine");
-const fs = require("fs/promises");
 
 const { getTestInputAndSource, runTests } = require("./core.js");
 const SSP = require("simple-string-pattern").default;
@@ -40,7 +39,7 @@ const writeAssertions =
    * @param {string} fileName
    * @param {string} tsFileName
    * @param {*} onTestMarkFn callback function (srcFileName, lineNumber, line): void. called on every testMark line
-   * @returns {number} number of assertions filled.
+   * @returns {[string[] ,number]} output lines, number of assertions filled.
    */
   async (fileName, tsFileName = null, onTestMarkFn) => {
     const MAX_WRITTEN_PATTERN_LENGTH = 20;
@@ -80,11 +79,8 @@ const writeAssertions =
         return s;
       })
       .join("\n");
-    if (assertionsFilledCount > 0) {
-      await fs.writeFile(tsFileName || fileName, content);
-    }
     log(`[${assertionsFilledCount}] assertion comment(s) written.`);
-    return assertionsFilledCount;
+    return [content, assertionsFilledCount];
   };
 
 // ------------------------------------------------
