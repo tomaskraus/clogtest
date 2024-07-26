@@ -105,5 +105,6 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
      * @returns {number} number of assertions filled.
      */
     fillAssertions: fillAssertions(testMark),
+    testMark: testMark,
   };
 };
