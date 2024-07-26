@@ -175,7 +175,7 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
     return [testInputs, source];
   } finally {
     if (voidAssertionInjectedFileName) {
-      log(`deleting [${voidAssertionInjectedFileName}] ...`);
+      log(`deleting temporary file [${voidAssertionInjectedFileName}] ...`);
       await fs.rm(voidAssertionInjectedFileName);
       log(`... deleted: [${voidAssertionInjectedFileName}]`);
     }
