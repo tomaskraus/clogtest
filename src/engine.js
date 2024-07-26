@@ -32,7 +32,7 @@ const doTests =
     return [...testResults, source];
   };
 
-const writeAssertions =
+const fillAssertions =
   (testMark) =>
   /**
    * Fills empty assertions with received output values.
@@ -45,7 +45,7 @@ const writeAssertions =
     const MAX_WRITTEN_PATTERN_LENGTH = 20;
 
     const srcFileName = tsFileName || fileName;
-    log(`writeAssertions to file: [${srcFileName}]`);
+    log(`fillAssertions, from file: [${srcFileName}]`);
     const [testInputs, inputs] = await getTestInputAndSource(
       testMark,
       fileName,
@@ -71,7 +71,7 @@ const writeAssertions =
                 .limitPatternLen(MAX_WRITTEN_PATTERN_LENGTH)
                 .value();
             assertionsFilledCount++;
-            log(`write assertion [${lineNumber}] [${s}]`);
+            log(`fill assertion [${lineNumber}] [${s}]`);
             onTestMarkFn(srcFileName, lineNumber, s);
           }
           testInputIndex++;
@@ -79,7 +79,7 @@ const writeAssertions =
         return s;
       })
       .join("\n");
-    log(`[${assertionsFilledCount}] assertion comment(s) written.`);
+    log(`[${assertionsFilledCount}] assertion comment(s) filled.`);
     return [content, assertionsFilledCount];
   };
 
@@ -104,6 +104,6 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
      * @param {*} onTestMarkFn callback function (srcFileName, lineNumber, line): void. called on every testMark line
      * @returns {number} number of assertions filled.
      */
-    writeAssertions: writeAssertions(testMark),
+    fillAssertions: fillAssertions(testMark),
   };
 };

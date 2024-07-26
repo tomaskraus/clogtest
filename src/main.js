@@ -36,7 +36,7 @@ const writeAssertions = async (fileName, tsFileName = null) => {
 
   const sourceFileName = tsFileName || fileName;
   printHeader("write-assertions: ", sourceFileName);
-  const [content, assertionsFilledCount] = await engine.writeAssertions(
+  const [content, assertionsFilledCount] = await engine.fillAssertions(
     fileName,
     tsFileName,
     printLineHandler
