@@ -11,7 +11,7 @@
     "format:write": "npx prettier --write .",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test": "npm run compile && jest",
+    "test": "npm run compile && jest --runInBand",
     "lint": "npx eslint",
     "compile": "npx tsc"
   },
