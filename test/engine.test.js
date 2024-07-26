@@ -70,6 +70,7 @@ describe("normal ops", () => {
     const [results, fails] = await doTests("./test/inputs/empty-assertion.js");
     expect(results.length).toEqual(2);
     expect(results[0].pass).toBeFalsy();
+    expect(results[0].errMsg).not.toBeUndefined();
     expect(results[1].pass).toBeTruthy();
     expect(fails.length).toEqual(1);
     expect(fails[0].pass).toBeFalsy();
