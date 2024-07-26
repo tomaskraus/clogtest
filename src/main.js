@@ -44,7 +44,7 @@ const writeAssertions = async (fileName, tsFileName = null) => {
   out(`${assertionsFilledCount} assertion comment(s) filled`);
   if (assertionsFilledCount > 0) {
     log(`Writing filled assertions to [${tsFileName || fileName}]`);
-    await fs.writeFile(tsFileName || fileName, content);
+    await fs.writeFile(tsFileName || fileName, content.join("\n"));
   }
   log(`writeAssertions: END - - - - -`);
 };
