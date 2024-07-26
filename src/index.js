@@ -1,6 +1,11 @@
-const { doTestsAndPrintResults, writeAssertions } = require("./main");
-const { Command, createOption } = require("commander");
+/**
+ * ClogTest CLI.
+ */
+
 const Path = require("path");
+const { Command, createOption } = require("commander");
+
+const { doTestsAndPrintResults, writeAssertions } = require("./main");
 
 // ------------------------------------------
 

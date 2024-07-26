@@ -1,20 +1,22 @@
 /**
  * A facade that provides business logic for a CLI.
+ * Combines the engine and the top-level I/O.
  */
+
+const fs = require("fs/promises");
 
 const engine = require("./engine.js")();
 const { printResults, out } = require("./report.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
-const fs = require("fs/promises");
 
 const appName = require("../package.json").name;
+
+// ------------------
 
 const printHeader = (action, fileName) => {
   out(`${appName} ${action}: ${fileName}`);
 };
-
-// ------------------
 
 const doTestsAndPrintResults = async (fileName, tsFileName = null) => {
   log(`doTestsAndPrintResults: START ---------`);

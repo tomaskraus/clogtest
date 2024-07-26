@@ -1,20 +1,19 @@
 /**
- * Building blocks for ClogTest API
+ * Building blocks for ClogTest API.
  */
+const fs = require("fs/promises");
+const Path = require("path");
+const process = require("node:process");
+
+const streamBuffers = require("stream-buffers");
+window = {}; // NodeJS hack for console-redirect
+const redirect = require("console-redirect");
+
+const { switchTrueFalse, nthElementAfter } = require("stateful-predicates");
+const SSP = require("simple-string-pattern").default;
 
 const { appLog, getPaddingStr } = require("./utils.js");
 const log = appLog.extend("core");
-
-const fs = require("fs/promises");
-const Path = require("path");
-
-const { switchTrueFalse, nthElementAfter } = require("stateful-predicates");
-
-window = {}; // NodeJS hack for console-redirect
-const redirect = require("console-redirect");
-const streamBuffers = require("stream-buffers");
-const process = require("node:process");
-const SSP = require("simple-string-pattern").default;
 
 /**
  *

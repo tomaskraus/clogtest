@@ -1,3 +1,7 @@
+/**
+ * Code used across the codebase.
+ */
+
 const Debug = require("debug");
 
 const appLog = Debug("clogtest");

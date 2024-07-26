@@ -1,12 +1,12 @@
 /**
- * ClogTest API
+ * ClogTest API.
  */
 
-const { appLog } = require("./utils.js");
-const log = appLog.extend("engine");
+const SSP = require("simple-string-pattern").default;
 
 const { getTestInputAndSource, runTests } = require("./core.js");
-const SSP = require("simple-string-pattern").default;
+const { appLog } = require("./utils.js");
+const log = appLog.extend("engine");
 
 /**
  *

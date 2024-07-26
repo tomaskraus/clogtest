@@ -1,8 +1,14 @@
-const { appLog } = require("./utils.js");
-const log = appLog.extend("report");
+/**
+ * All about console output.
+ */
+
 const chalk = require("chalk");
 const { escape } = require("safe-string-literal");
+
 const SSP = require("simple-string-pattern").default;
+
+const { appLog } = require("./utils.js");
+const log = appLog.extend("report");
 
 // TestResultType = {
 //   lineNumber: number,
