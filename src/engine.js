@@ -26,12 +26,12 @@ const srcName = (jsFileName, tsFileName) => {
  * @param {string} testMark
  * @returns {(string, string | null) => [testResults[], testResults[],string[]]} doTests function
  */
-const doTests =
+const createDoTests =
   (testMark) =>
   /**
    * Performs tests.
    * @param {string} fileName
-   * @param {string} tsFileName
+   * @param {string | null} tsFileName
    * @returns {[testResults[], testResults[],string[]]} [all results, failures, source content]
    */
   async (fileName, tsFileName = null) => {
@@ -44,12 +44,17 @@ const doTests =
     return [...testResults, source];
   };
 
-const fillAssertions =
+/**
+ * Creates an assertions-fill function.
+ * @param {string} testMark
+ * @returns {string, string | null, null | (string, number, string) => void}
+ */
+const createFillAssertions =
   (testMark) =>
   /**
    * Fills empty assertions with received output values.
    * @param {string} fileName
-   * @param {string} tsFileName
+   * @param {string | null} tsFileName
    * @param {null | (string, number, string) => void} onTestMarkFn callback function (srcFileName, lineNumber, line). called on every testMark line
    * @returns {[string[] ,number]} output lines, number of assertions filled.
    */
@@ -106,18 +111,18 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
     /**
      * Performs tests.
      * @param {string} fileName
-     * @param {string} tsFileName
+     * @param {string | null} tsFileName
      * @returns {[testResults[], testResults[],string[]]} [all results, failures, source content]
      */
-    doTests: doTests(testMark),
+    doTests: createDoTests(testMark),
     /**
      * Fills empty assertions with received output values.
      * @param {string} fileName
-     * @param {string} tsFileName
-     * @param {*} onTestMarkFn callback function (srcFileName, lineNumber, line): void. called on every testMark line
-     * @returns {number} number of assertions filled.
+     * @param {string | null} tsFileName
+     * @param {null | (string, number, string) => void} onTestMarkFn callback function (srcFileName, lineNumber, line). called on every testMark line
+     * @returns {[string[] ,number]} output lines, number of assertions filled.
      */
-    fillAssertions: fillAssertions(testMark),
-    testMark: testMark,
+    fillAssertions: createFillAssertions(testMark),
+    testMark,
   };
 };
