@@ -1,19 +1,6 @@
-// const mock = require("mock-fs");
-
 const engineFn = require("../src/engine");
 
 const { doTests, srcName } = engineFn();
-
-// beforeEach(() => {
-//   mock({
-//     "empty.js": "",
-//   });
-//   mock.file();
-// });
-
-// afterEach(() => {
-//   mock.restore();
-// });
 
 describe("srcName", () => {
   test("returns js file if ts is undefined", () => {
