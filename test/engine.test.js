@@ -27,6 +27,7 @@ describe("srcName", () => {
   test("throws error if js file name does not end with '.js'", () => {
     expect(() => srcName("hello.ts")).toThrow(/\.js/);
     expect(() => srcName("hello.ts", "hi.ts")).toThrow(/\.js/);
+    expect(() => srcName("hello", "hi.ts")).toThrow(/\.js/);
   });
 });
 
