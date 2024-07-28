@@ -2,7 +2,7 @@
 
 const engineFn = require("../src/engine");
 
-const { doTests } = engineFn();
+const { doTests, srcName } = engineFn();
 
 // beforeEach(() => {
 //   mock({
@@ -14,6 +14,21 @@ const { doTests } = engineFn();
 // afterEach(() => {
 //   mock.restore();
 // });
+
+describe("srcName", () => {
+  test("returns js file if ts is undefined", () => {
+    expect(srcName("hello.js")).toEqual("hello.js");
+  });
+
+  test("returns ts if ts is defined", () => {
+    expect(srcName("hello.js", "hi.ts")).toEqual("hi.ts");
+  });
+
+  test("throws error if js file name does not end with '.js'", () => {
+    expect(() => srcName("hello.ts")).toThrow(/\.js/);
+    expect(() => srcName("hello.ts", "hi.ts")).toThrow(/\.js/);
+  });
+});
 
 describe("normal ops", () => {
   test("empty input means empty results", async () => {

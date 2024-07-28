@@ -20,12 +20,12 @@ const printHeader = (action, fileName) => {
 
 const doTestsAndPrintResults = async (fileName, tsFileName = null) => {
   log(`doTestsAndPrintResults: START ---------`);
-  printHeader("test", tsFileName || fileName);
+  printHeader("test", engine.srcName(fileName, tsFileName));
   const [allResults, fails, source] = await engine.doTests(
     fileName,
     tsFileName
   );
-  printResults(allResults, fails, tsFileName || fileName, source);
+  printResults(allResults, fails, engine.srcName(fileName, tsFileName), source);
   log(`doTestsAndPrintResults: END - - - - -`);
   return fails.length === 0 ? 0 : 1;
 };
@@ -36,7 +36,7 @@ const writeAssertions = async (fileName, tsFileName = null) => {
   const printLineHandler = (fileName, lineNumber, line) =>
     out(`\t${fileName}:${lineNumber}\t${line.trim()}`);
 
-  const sourceFileName = tsFileName || fileName;
+  const sourceFileName = engine.srcName(fileName, tsFileName);
   printHeader("write-assertions: ", sourceFileName);
   const [content, assertionsFilledCount] = await engine.fillAssertions(
     fileName,
@@ -45,8 +45,8 @@ const writeAssertions = async (fileName, tsFileName = null) => {
   );
   out(`${assertionsFilledCount} assertion comment(s) filled`);
   if (assertionsFilledCount > 0) {
-    log(`Writing filled assertions to [${tsFileName || fileName}]`);
-    await fs.writeFile(tsFileName || fileName, content.join("\n"));
+    log(`Writing filled assertions to [${sourceFileName}}]`);
+    await fs.writeFile(sourceFileName, content.join("\n"));
   }
   log(`writeAssertions: END - - - - -`);
 };

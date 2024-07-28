@@ -10,9 +10,21 @@ const log = appLog.extend("engine");
 
 /**
  *
- * @param {string} fileName
- * @param {string | null} tsFileName
- * @returns {[testResults[], testResults[],string[]]}
+ * @param {string} jsFileName
+ * @param {string} tsFileName
+ * @returns {string} tsFileName if it is not null/undefined, else jsFileName
+ */
+const srcName = (jsFileName, tsFileName) => {
+  if (jsFileName.slice(-3) !== ".js") {
+    throw new Error(`jsFileName: [${jsFileName}] must end with ".js"`);
+  }
+  return tsFileName || jsFileName;
+};
+
+/**
+ * Creates a tests performing function.
+ * @param {string} testMark
+ * @returns {(string, string | null) => [testResults[], testResults[],string[]]} doTests function
  */
 const doTests =
   (testMark) =>
@@ -44,7 +56,7 @@ const fillAssertions =
   async (fileName, tsFileName = null, onTestMarkFn = null) => {
     const MAX_WRITTEN_PATTERN_LENGTH = 20;
 
-    const srcFileName = tsFileName || fileName;
+    const srcFileName = srcName(fileName, tsFileName);
     log(`fillAssertions, from file: [${srcFileName}]`);
     const [testInputs, inputs] = await getTestInputAndSource(
       testMark,
@@ -90,6 +102,7 @@ const DEFAULT_TEST_MARK = "//=>";
 module.exports = (testMark = DEFAULT_TEST_MARK) => {
   log(`Engine created with testMark: [${testMark}]`);
   return {
+    srcName,
     /**
      * Performs tests.
      * @param {string} fileName
