@@ -139,6 +139,28 @@ describe("Custom test mark:", () => {
     expect(totalCount).toEqual(0);
     expect(failedCount).toEqual(0);
   });
+
+  test("Skips custom test marks with skip mark", async () => {
+    const [results] = await doTests(
+      "./dist/test/inputs/custom-test-mark-skip.js",
+      "./test/inputs/custom-test-mark-skip.ts"
+    );
+    const { totalCount, failedCount, skippedCount, passedCount } =
+      getStats(results);
+    expect(totalCount).toEqual(8);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].pass).toBeTruthy();
+    expect(results[2].skip).toBeTruthy();
+    expect(results[3].pass).toBeTruthy();
+    expect(results[4].skip).toBeTruthy();
+    expect(results[5].skip).toBeTruthy();
+    expect(results[6].pass).toBeFalsy();
+    expect(results[7].pass).toBeTruthy();
+
+    expect(skippedCount).toEqual(3);
+    expect(passedCount).toEqual(4);
+    expect(failedCount).toEqual(1);
+  });
 });
 
 describe("Skip test mark:", () => {
