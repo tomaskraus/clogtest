@@ -81,17 +81,23 @@ const printFail =
   };
 
 const printResume = (statsObj) => {
+const printResume = ({
+  totalCount,
+  skippedCount,
+  passedCount,
+  failedCount,
+}) => {
   log(`printResume:`);
 
-  let str = `${statsObj.totalCount} total`;
-  if (statsObj.skippedCount > 0) {
-    str = `${cwarn.bold(statsObj.skippedCount + " skipped")}, ${str}`;
+  let str = `${totalCount} total`;
+  if (skippedCount > 0) {
+    str = `${cwarn.bold(skippedCount + " skipped")}, ${str}`;
   }
-  if (statsObj.passedCount > 0) {
-    str = `${cok.bold(statsObj.passedCount + " passed")}, ${str}`;
+  if (passedCount > 0) {
+    str = `${cok.bold(passedCount + " passed")}, ${str}`;
   }
-  if (statsObj.failedCount > 0) {
-    str = `${cerr.bold(statsObj.failedCount + " failed")}, ${str}`;
+  if (failedCount > 0) {
+    str = `${cerr.bold(failedCount + " failed")}, ${str}`;
   }
 
   out(`Tests: \t${str}`);
