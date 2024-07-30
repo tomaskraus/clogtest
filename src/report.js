@@ -32,20 +32,19 @@ const limitAndEscape = (str) => {
 
 /**
  *
- * @param {[object]} results
  * @param {[object]} fails
  * @param {string} inputFileName
  * @param {[string]} outputLines
  */
-const printResults = (results, fails, inputFileName, outputLines) => {
-  log(`printResults for file [${inputFileName}]`);
+const printFails = (fails, inputFileName, outputLines) => {
+  log(`printFails for file [${inputFileName}]`);
   // console.log("inputLines: ", inputLines);
   fails.map(printFail(inputFileName, outputLines));
-  printResume(fails.length, results.length);
-  log(`printResults END`);
+  log(`printFails END`);
 };
 
 const cerr = chalk.red;
+const cwarn = chalk.yellow;
 const cok = chalk.green;
 const csh = chalk.blue;
 const csw = chalk.white.bold;
@@ -81,16 +80,18 @@ const printFail =
     out("");
   };
 
-const printResume = (numberOfFails, numberTotal) => {
+const printResume = (statsObj) => {
   log(`printResume:`);
 
-  let str = `${numberTotal} total`;
-  const numberOfPassed = numberTotal - numberOfFails;
-  if (numberOfPassed > 0) {
-    str = `${cok.bold(numberOfPassed + " passed")}, ${str}`;
+  let str = `${statsObj.totalCount} total`;
+  if (statsObj.skippedCount > 0) {
+    str = `${cwarn.bold(statsObj.skippedCount + " skipped")}, ${str}`;
   }
-  if (numberOfFails > 0) {
-    str = `${cerr.bold(numberOfFails + " failed")}, ${str}`;
+  if (statsObj.passedCount > 0) {
+    str = `${cok.bold(statsObj.passedCount + " passed")}, ${str}`;
+  }
+  if (statsObj.failedCount > 0) {
+    str = `${cerr.bold(statsObj.failedCount + " failed")}, ${str}`;
   }
 
   out(`Tests: \t${str}`);
@@ -98,6 +99,7 @@ const printResume = (numberOfFails, numberTotal) => {
 };
 
 module.exports = {
-  printResults,
+  printFails,
+  printResume,
   out,
 };

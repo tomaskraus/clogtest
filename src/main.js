@@ -6,7 +6,7 @@
 const fs = require("fs/promises");
 
 const engine = require("./engine.js")();
-const { printResults, out } = require("./report.js");
+const { printFails, printResume, out } = require("./report.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
 
@@ -21,11 +21,10 @@ const printHeader = (action, fileName) => {
 const doTestsAndPrintResults = async (fileName, tsFileName = null) => {
   log(`doTestsAndPrintResults: START ---------`);
   printHeader("test", engine.srcName(fileName, tsFileName));
-  const [allResults, fails, source] = await engine.doTests(
-    fileName,
-    tsFileName
-  );
-  printResults(allResults, fails, engine.srcName(fileName, tsFileName), source);
+  const [allResults, source] = await engine.doTests(fileName, tsFileName);
+  const fails = allResults.filter(engine.failedResultPredicate);
+  printFails(fails, engine.srcName(fileName, tsFileName), source);
+  printResume(engine.getStats(allResults));
   log(`doTestsAndPrintResults: END - - - - -`);
   return fails.length === 0 ? 0 : 1;
 };

@@ -15,6 +15,8 @@ const SSP = require("simple-string-pattern").default;
 const { appLog, getPaddingStr } = require("./utils.js");
 const log = appLog.extend("core");
 
+const SKIP_MARK = "#";
+
 /**
  *
  * @param {string} fileName
@@ -118,9 +120,9 @@ const prepareAssertionStr = (testMark, s) => {
 /**
  *
  * @param {string} testMarkStr
- * @param {[string]} outputGroups
- * @param {[string]} inputFileLines
- * @returns {[object]} [{lineNumber: number, linePadding: string, expected: string, received: string}]
+ * @param {string[]} outputGroups
+ * @param {string[]} inputFileLines
+ * @returns {object[]} [{lineNumber: number, linePadding: string, expected: string, received: string, skip: boolean}]
  */
 const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
   lineNumber = 1;
@@ -141,6 +143,10 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
       ...item,
       expected: prepareAssertionStr(testMarkStr, item.expected),
       received: outputGroups[groupIndex++], // groups are as many as testMarks
+    }))
+    .map((item) => ({
+      ...item,
+      skip: item.expected.startsWith(SKIP_MARK),
     }));
   log(`testInput item count [${testInputs.length}]`);
   return testInputs;
@@ -183,8 +189,10 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
 
 // ----------------------------------------------------------------
 
-const testOneItem = ({ lineNumber, expected, received }) => {
-  log(`  testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}]`);
+const testOneItem = ({ lineNumber, expected, received, skip }) => {
+  log(
+    `  testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}] ${skip ? "--SKIPPED--" : ""}`
+  );
 
   let pass = false;
   let errMsg = undefined;
@@ -199,20 +207,21 @@ const testOneItem = ({ lineNumber, expected, received }) => {
     received,
     pass,
     errMsg,
+    skip,
   };
 };
 
 /**
  *
- * @param {[object]} testInputs [{lineNumber: number, expected: string, received: string, pass: boolean}]
- * @returns
+ * @param {object[]} testInputs [{lineNumber: number, expected: string, received: string, pass: boolean, skip: boolean}]
+ * @returns {object[]} all tests (including skipped ones)
  */
 const runTests = (testInputs) => {
   log(`runTests running [${testInputs.length}] test(s)`);
   const allResults = testInputs.map(testOneItem);
   const fails = allResults.filter((t) => !t.pass);
   log(`Results: all [${allResults.length}], fails [${fails.length}]`);
-  return [allResults, fails];
+  return allResults;
 };
 
 module.exports = {
