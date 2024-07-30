@@ -62,7 +62,7 @@ const getStats = (results) => {
 /**
  *
  * @param {object} result
- * @returns true if result does not pass
+ * @returns true if result does not pass and is not skipped
  */
 const failedResultPredicate = (result) => !result.pass && !result.skip;
 
