@@ -1,5 +1,5 @@
 /**
- * All about console output.
+ * All about console pretty-print output.
  */
 
 const chalk = require("chalk");
@@ -20,6 +20,9 @@ const log = appLog.extend("report");
 
 // --------------------------------------------------------------
 
+/**
+ * output
+ */
 const out = console.error;
 
 const limitAndEscape = (str) => {
@@ -31,7 +34,7 @@ const limitAndEscape = (str) => {
 };
 
 /**
- *
+ * Pretty prints failed tests.
  * @param {[object]} fails
  * @param {string} inputFileName
  * @param {[string]} outputLines
@@ -80,7 +83,10 @@ const printFail =
     out("");
   };
 
-const printResume = (statsObj) => {
+/**
+ * Pretty prints results summary
+ * @param {statsObj} stats test results summary data
+ */
 const printResume = ({
   totalCount,
   skippedCount,
