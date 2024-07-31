@@ -1,6 +1,6 @@
 /**
- * A facade that provides business logic for a CLI.
- * Combines the engine and the top-level I/O.
+ * A facade that provides business and presentation logic to the CLI.
+ * Uses the engine and reports to the console stdout, stderr.
  */
 
 const fs = require("fs/promises");
