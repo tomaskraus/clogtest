@@ -20,9 +20,9 @@ const SKIP_MARK = "#";
 /**
  *
  * @param {string} fileName
- * @returns {Promise<string>}
+ * @returns {Promise<string[]>}
  */
-const loadInputFile = async (fileName) => {
+const loadInputFileLines = async (fileName) => {
   log(`opening input file [${fileName}]`);
   const data = await fs.readFile(fileName, { encoding: "utf-8" });
   return data.split("\n");
@@ -160,12 +160,12 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
  * @returns {Promise<[[object], [string]]>}
  */
 const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
-  const input = await loadInputFile(fileName);
+  const input = await loadInputFileLines(fileName);
   let tsInput = null;
   let voidAssertionInjectedFileName = null;
   if (tsFileName) {
     log(`typeScript file requested: [${tsFileName}]`);
-    tsInput = await loadInputFile(tsFileName);
+    tsInput = await loadInputFileLines(tsFileName);
   }
   try {
     voidAssertionInjectedFileName = await createFileWithInjectedAssertionPrints(
