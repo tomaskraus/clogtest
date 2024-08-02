@@ -72,8 +72,8 @@ const printFail =
       const exppatt = new SSP(expected);
 
       out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-      out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
-      out(`  does not match the output: \t${cerr(limitAndEscape(received))}`);
+      out(`  Pattern: \t\t\t"${cok(exppatt.value())}"`);
+      out(`  does not match the output: \t"${cerr(limitAndEscape(received))}"`);
     } else {
       out(`${cerr("!!!")} ${csh(inputFileName + ":" + lineNumber)}`);
       out(`${cerr("Error")}: ${errMsg}`);
