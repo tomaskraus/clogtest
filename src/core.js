@@ -4,6 +4,7 @@
 const fs = require("fs/promises");
 const Path = require("path");
 const process = require("node:process");
+const crypto = require("crypto");
 
 const streamBuffers = require("stream-buffers");
 window = {}; // NodeJS hack for console-redirect
@@ -42,6 +43,7 @@ const createBlockCommentPredicate = () =>
  * @returns {Promise<string>} a name of a newly created file
  */
 const createFileWithInjectedSplitPrints = async (
+  testMark,
   splitMark,
   inputFileName,
   inputFileLines
@@ -58,7 +60,7 @@ const createFileWithInjectedSplitPrints = async (
     .reduce((acc, line) => {
       if (!isInBlockComment(line)) {
         acc.push(line);
-        if (line.trimStart().startsWith(splitMark)) {
+        if (line.trimStart().startsWith(testMark)) {
           acc.push(`console.log('${splitMark}')`);
         }
       }
@@ -168,13 +170,15 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
     tsInput = await loadInputFileLines(tsFileName);
   }
   try {
+    const splitMark = createUniqueSplitMark();
     splitMarkInjectedFileName = await createFileWithInjectedSplitPrints(
       testMarkStr,
+      splitMark,
       fileName,
       input
     );
     const output = runSourceAndGatherOutputLines(splitMarkInjectedFileName);
-    const groups = groupOutputBySplitMarks(testMarkStr, output);
+    const groups = groupOutputBySplitMarks(splitMark, output);
     const source = tsInput || input;
     const testInputs = createTestInputs(testMarkStr, groups, source);
     return [testInputs, source];
@@ -185,6 +189,10 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
       log(`... deleted: [${splitMarkInjectedFileName}]`);
     }
   }
+};
+
+const createUniqueSplitMark = () => {
+  return crypto.randomUUID();
 };
 
 // ----------------------------------------------------------------
