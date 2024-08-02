@@ -36,13 +36,13 @@ const createBlockCommentPredicate = () =>
 
 /**
  *
- * @param {string} testMark
+ * @param {string} splitMark
  * @param {string} inputFileName
  * @param {[string]} inputFileLines
  * @returns {Promise<string>} a name of a newly created file
  */
-const createFileWithInjectedAssertionPrints = async (
-  testMark,
+const createFileWithInjectedSplitPrints = async (
+  splitMark,
   inputFileName,
   inputFileLines
 ) => {
@@ -58,8 +58,8 @@ const createFileWithInjectedAssertionPrints = async (
     .reduce((acc, line) => {
       if (!isInBlockComment(line)) {
         acc.push(line);
-        if (line.trimStart().startsWith(testMark)) {
-          acc.push(`console.log('${testMark}')`);
+        if (line.trimStart().startsWith(splitMark)) {
+          acc.push(`console.log('${splitMark}')`);
         }
       }
       return acc;
@@ -93,14 +93,14 @@ const runSourceAndGatherOutputLines = (fileName) => {
 
 /**
  *
- * @param {string} testMarkStr
+ * @param {string} splitMark
  * @param {[string]} outputLines
  * @returns {[string]}
  */
-const groupOutputByAssertions = (testMarkStr, outputLines) => {
+const groupOutputBySplitMarks = (splitMark, outputLines) => {
   const [_, groups] = outputLines.reduce(
     ([currentOutputStr, outputArr], line) => {
-      if (line.startsWith(testMarkStr)) {
+      if (line.startsWith(splitMark)) {
         outputArr.push(currentOutputStr);
         return ["", outputArr];
       }
@@ -162,27 +162,27 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
 const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
   const input = await loadInputFileLines(fileName);
   let tsInput = null;
-  let voidAssertionInjectedFileName = null;
+  let splitMarkInjectedFileName = null;
   if (tsFileName) {
     log(`typeScript file requested: [${tsFileName}]`);
     tsInput = await loadInputFileLines(tsFileName);
   }
   try {
-    voidAssertionInjectedFileName = await createFileWithInjectedAssertionPrints(
+    splitMarkInjectedFileName = await createFileWithInjectedSplitPrints(
       testMarkStr,
       fileName,
       input
     );
-    const output = runSourceAndGatherOutputLines(voidAssertionInjectedFileName);
-    const groups = groupOutputByAssertions(testMarkStr, output);
+    const output = runSourceAndGatherOutputLines(splitMarkInjectedFileName);
+    const groups = groupOutputBySplitMarks(testMarkStr, output);
     const source = tsInput || input;
     const testInputs = createTestInputs(testMarkStr, groups, source);
     return [testInputs, source];
   } finally {
-    if (voidAssertionInjectedFileName) {
-      log(`deleting temporary file [${voidAssertionInjectedFileName}] ...`);
-      await fs.rm(voidAssertionInjectedFileName);
-      log(`... deleted: [${voidAssertionInjectedFileName}]`);
+    if (splitMarkInjectedFileName) {
+      log(`deleting temporary file [${splitMarkInjectedFileName}] ...`);
+      await fs.rm(splitMarkInjectedFileName);
+      log(`... deleted: [${splitMarkInjectedFileName}]`);
     }
   }
 };
