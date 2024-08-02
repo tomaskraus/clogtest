@@ -1,5 +1,5 @@
 /**
- * All about console output.
+ * All about console pretty-print output.
  */
 
 const chalk = require("chalk");
@@ -20,6 +20,9 @@ const log = appLog.extend("report");
 
 // --------------------------------------------------------------
 
+/**
+ * output
+ */
 const out = console.error;
 
 const limitAndEscape = (str) => {
@@ -31,21 +34,20 @@ const limitAndEscape = (str) => {
 };
 
 /**
- *
- * @param {[object]} results
+ * Pretty prints failed tests.
  * @param {[object]} fails
  * @param {string} inputFileName
  * @param {[string]} outputLines
  */
-const printResults = (results, fails, inputFileName, outputLines) => {
-  log(`printResults for file [${inputFileName}]`);
+const printFails = (fails, inputFileName, outputLines) => {
+  log(`printFails for file [${inputFileName}]`);
   // console.log("inputLines: ", inputLines);
   fails.map(printFail(inputFileName, outputLines));
-  printResume(fails.length, results.length);
-  log(`printResults END`);
+  log(`printFails END`);
 };
 
 const cerr = chalk.red;
+const cwarn = chalk.yellow;
 const cok = chalk.green;
 const csh = chalk.blue;
 const csw = chalk.white.bold;
@@ -70,8 +72,8 @@ const printFail =
       const exppatt = new SSP(expected);
 
       out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-      out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
-      out(`  does not match the output: \t${cerr(limitAndEscape(received))}`);
+      out(`  Pattern: \t\t\t"${cok(exppatt.value())}"`);
+      out(`  does not match the output: \t"${cerr(limitAndEscape(received))}"`);
     } else {
       out(`${cerr("!!!")} ${csh(inputFileName + ":" + lineNumber)}`);
       out(`${cerr("Error")}: ${errMsg}`);
@@ -81,16 +83,27 @@ const printFail =
     out("");
   };
 
-const printResume = (numberOfFails, numberTotal) => {
+/**
+ * Pretty prints results summary
+ * @param {statsObj} stats test results summary data
+ */
+const printResume = ({
+  totalCount,
+  skippedCount,
+  passedCount,
+  failedCount,
+}) => {
   log(`printResume:`);
 
-  let str = `${numberTotal} total`;
-  const numberOfPassed = numberTotal - numberOfFails;
-  if (numberOfPassed > 0) {
-    str = `${cok.bold(numberOfPassed + " passed")}, ${str}`;
+  let str = `${totalCount} total`;
+  if (skippedCount > 0) {
+    str = `${cwarn.bold(skippedCount + " skipped")}, ${str}`;
   }
-  if (numberOfFails > 0) {
-    str = `${cerr.bold(numberOfFails + " failed")}, ${str}`;
+  if (passedCount > 0) {
+    str = `${cok.bold(passedCount + " passed")}, ${str}`;
+  }
+  if (failedCount > 0) {
+    str = `${cerr.bold(failedCount + " failed")}, ${str}`;
   }
 
   out(`Tests: \t${str}`);
@@ -98,6 +111,7 @@ const printResume = (numberOfFails, numberTotal) => {
 };
 
 module.exports = {
-  printResults,
+  printFails,
+  printResume,
   out,
 };

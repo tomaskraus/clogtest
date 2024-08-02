@@ -24,7 +24,7 @@ const srcName = (jsFileName, tsFileName) => {
 /**
  * Creates a tests performing function.
  * @param {string} testMark
- * @returns {(string, string | null) => [testResults[], testResults[],string[]]} doTests function
+ * @returns {(string, string | null) => [testResults[], string[]]} doTests function
  */
 const createDoTests =
   (testMark) =>
@@ -32,7 +32,7 @@ const createDoTests =
    * Performs tests.
    * @param {string} fileName
    * @param {string | null} tsFileName
-   * @returns {[testResults[], testResults[],string[]]} [all results, failures, source content]
+   * @returns {[testResults[], string[]]} [all results (incl. skipped ones), source content]
    */
   async (fileName, tsFileName = null) => {
     const [testInputs, source] = await getTestInputAndSource(
@@ -41,8 +41,30 @@ const createDoTests =
       tsFileName
     );
     const testResults = runTests(testInputs);
-    return [...testResults, source];
+    return [testResults, source];
   };
+
+/**
+ *
+ * @param {object[]} results
+ * @returns Stats object: {totalCount, passedCount, failedCount, SkippedCount}
+ */
+const getStats = (results) => {
+  const notSkipped = results.filter((r) => !r.skip);
+  return {
+    totalCount: results.length,
+    passedCount: notSkipped.filter((r) => r.pass).length,
+    failedCount: notSkipped.filter((r) => !r.pass).length,
+    skippedCount: results.length - notSkipped.length,
+  };
+};
+
+/**
+ *
+ * @param {object} result
+ * @returns true if result does not pass and is not skipped
+ */
+const failedResultPredicate = (result) => !result.pass && !result.skip;
 
 /**
  * Creates an assertions-fill function.
@@ -112,9 +134,15 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
      * Performs tests.
      * @param {string} fileName
      * @param {string | null} tsFileName
-     * @returns {[testResults[], testResults[],string[]]} [all results, failures, source content]
+     * @returns {[testResults[], testResults[], testResults[], string[]]} [all results, failures, skipped, source content]
      */
     doTests: createDoTests(testMark),
+    /**
+     *
+     * @param {object[]} results
+     * @returns Stats object: {totalCount, passedCount, failedCount, SkippedCount}
+     */
+    getStats,
     /**
      * Fills empty assertions with received output values.
      * @param {string} fileName
@@ -123,6 +151,12 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
      * @returns {[string[] ,number]} output lines, number of assertions filled.
      */
     fillAssertions: createFillAssertions(testMark),
+    /**
+     *
+     * @param {object} result
+     * @returns true if result does not pass
+     */
+    failedResultPredicate,
     testMark,
   };
 };
