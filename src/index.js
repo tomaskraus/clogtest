@@ -54,7 +54,7 @@ program
   .addOption(jsDirOption)
   .addOption(customAssertionMarkOption)
   .description(
-    "Tests program's output against assertions comments (//=>) written in the program's source."
+    "Runs the source and tests its output against assertions comments (//=>) written in it."
   )
   .addHelpText(
     "after",
@@ -82,7 +82,7 @@ program
   .addOption(jsDirOption)
   .addOption(customAssertionMarkOption)
   .description(
-    "Runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code source."
+    "Runs the source and writes corresponding parts of its output to those empty assertion comments (//=>) in the code source."
   )
   .addHelpText(
     "after",
