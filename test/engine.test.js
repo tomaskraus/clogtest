@@ -176,10 +176,45 @@ describe("Skip test mark:", () => {
 
 // -------------------------------------------
 
-describe("Engine failures:", () => {
-  test("Throws Error if syntactically invalid javascript file is passed:", async () => {
-    await expect(() =>
-      doTests("./test/inputs/invalid-source.js")
-    ).rejects.toThrow(/Missing semicolon/);
+describe("Source that throws Error:", () => {
+  test("Syntaxically wrong source without any assertion means empty results:", async () => {
+    const [results] = await doTests(
+      "./test/inputs/invalid-source-no-assertions.js"
+    );
+    const { totalCount, failedCount } = getStats(results);
+    expect(totalCount).toEqual(0);
+    expect(failedCount).toEqual(0);
+  });
+
+  test("Error-throwing source without any assertion means empty results:", async () => {
+    const [results] = await doTests(
+      "./test/inputs/error-throwing-source-no-assertions.js"
+    );
+    const { totalCount, failedCount } = getStats(results);
+    expect(totalCount).toEqual(0);
+    expect(failedCount).toEqual(0);
+  });
+
+  test("Tests the error output of syntaxically wrong source:", async () => {
+    const [results] = await doTests("./test/inputs/invalid-source.js");
+    const { passedCount } = getStats(results);
+    expect(passedCount).toEqual(1);
+  });
+
+  test("Tests error-throwing source:", async () => {
+    const [results] = await doTests("./test/inputs/error-throwing.js");
+    const { passedCount } = getStats(results);
+    expect(passedCount).toEqual(1);
+  });
+
+  test("Valid test until the first error-throw only:", async () => {
+    const [results] = await doTests(
+      "./test/inputs/throws-only-the-first-error.js"
+    );
+    expect(results.length).toEqual(3);
+    expect(results[0].pass).toBeTruthy();
+    // test did not produce output for the rest of assertions
+    expect(results[1].pass).toBeFalsy();
+    expect(results[2].pass).toBeFalsy();
   });
 });

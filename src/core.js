@@ -84,6 +84,8 @@ const runSourceAndGatherOutputLines = (fileName) => {
 
   try {
     require(process.cwd() + Path.sep + fileName);
+  } catch (err) {
+    console.log(err.message);
   } finally {
     myConsole.release();
     buff.end();
@@ -101,6 +103,7 @@ const runSourceAndGatherOutputLines = (fileName) => {
  * @returns {[string]}
  */
 const groupOutputBySplitMarks = (splitMark, outputLines) => {
+  let accMem = "";
   const [_, groups] = outputLines.reduce(
     ([currentOutputStr, outputArr], line) => {
       if (line.startsWith(splitMark)) {
@@ -108,10 +111,15 @@ const groupOutputBySplitMarks = (splitMark, outputLines) => {
         return ["", outputArr];
       }
       currentOutputStr += currentOutputStr === "" ? line : "\n" + line;
+      accMem = currentOutputStr;
       return [currentOutputStr, outputArr];
     },
     ["", []]
   );
+  const restOutput = accMem.trim();
+  if (restOutput !== "" || groups.length === 0) {
+    groups.push(restOutput);
+  }
   log(`groupOutputBySplitMarks item count [${groups.length}]`);
   log(groups);
   return groups;
