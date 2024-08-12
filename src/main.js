@@ -36,13 +36,13 @@ const writeAssertions = async (fileName, tsFileName = null) => {
     out(`\t${fileName}:${lineNumber}\t${line.trim()}`);
 
   const sourceFileName = engine.srcName(fileName, tsFileName);
-  printHeader("write-assertions: ", sourceFileName);
+  printHeader("write-assertions", sourceFileName);
   const [content, assertionsFilledCount] = await engine.fillAssertions(
     fileName,
     tsFileName,
     printLineHandler
   );
-  out(`${assertionsFilledCount} assertion comment(s) filled`);
+  out(`${assertionsFilledCount} assertion comment(s) written.`);
   if (assertionsFilledCount > 0) {
     log(`Writing filled assertions to [${sourceFileName}}]`);
     await fs.writeFile(sourceFileName, content.join("\n"));
