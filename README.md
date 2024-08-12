@@ -24,7 +24,7 @@ console.log({}.append);
 //=> null
 ```
 
-Those values in (`//=>`) comments are written using a [Simple string pattern](https://github.com/tomaskraus/simple-string-pattern) (a.k.a. **SSP**) syntax.  
+Those values in (`//=>`) comments are written using a [Simple String Pattern][1] (a.k.a. **SSP**) syntax.  
 **SSP** expressions are much simpler to read and write than [Regular expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions).
 
 2. run `clogtest` on it:
@@ -105,6 +105,61 @@ Tests:  4 passed, 4 total
 
 7. Hurrah🙂
 
+## On Assertions
+
+**clogtest** CLI app runs the _source file_ from command line argument and looks for those line comments beginning with `//=>`. These special line comments are called _Assertions_.
+
+The _Assertion_ consists of _Assertion Mark_ (that `//=>` string) and _Assertion Body_, which must be a valid _Simple string pattern_ a.k.a. SSP (don't be worry, SSP format is very easy).
+
+Clogtest tests output of the _source file_ against body parts of its _Assertions_.
+
+Example:
+
+```js
+//=> this is it
+```
+
+The above example shows an assertion line with a body "this is it".  
+This body is a valid _Simple string pattern_ and the Assertion expects output to exactly match the string "this is it".
+
+> **Note**: Every _Assertion_ occupies exactly one line in the file.
+
+## More Examples
+
+Here are some SSP (Simple String Pattern) examples in the `//=>` assertions
+
+```js
+// We expect the output to be 2
+console.log(1 + 1);
+//=> 2
+
+console.log(1 + 1 === 2);
+//=> true
+
+// Here, we only write the beginning of what we expect to be the output
+console.log("abcd".split(""));
+//=> [ 'a', 'b' ...
+
+// What the end of the output should look like (including the space at the end.)
+console.log("Thats All! ");
+//=> ... "All! "
+
+// What the (possibly multi-line) output should contain
+console.log("Line: 155 \nError: Division by zero!");
+//=> ... zero ...
+
+// In the expected output,
+// we can describe common special characters using escape sequences
+console.log("a" + String.fromCharCode(9) + "1");
+//=> a\t1
+
+// And yes we can go beyond the ASCII:
+console.log("絵文字: 😀.");
+//=> 絵文字: 😀.
+```
+
+For more about SSP format, see [Simple String Pattern documentation][1].
+
 ## TypeScript
 
 You can also test `.ts` files! The only thing **clogtest** needs to know is where the corresponding generated javascript files are. Use the clogtest's `--jsDir` option for that:
@@ -176,5 +231,6 @@ or globally:
 $ npm i -g clogtest
 ```
 
-[1]: https://www.npmjs.com/package/markdown-doctest
-[2]: https://byexamples.github.io/byexample/languages/javascript
+[1]: https://github.com/tomaskraus/simple-string-pattern
+[2]: https://www.npmjs.com/package/markdown-doctest
+[3]: https://byexamples.github.io/byexample/languages/javascript
