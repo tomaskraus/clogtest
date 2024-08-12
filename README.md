@@ -148,9 +148,9 @@ console.log("Thats All! ");
 console.log("Line: 155 \nError: Division by zero!");
 //=> ... zero ...
 
-// In the expected output,
+// In the assertion body,
 // we can describe common special characters using escape sequences
-console.log("a" + String.fromCharCode(9) + "1");
+console.log("a" + String.fromCharCode(9) + "1"); //tab has charCode 9
 //=> a\t1
 
 // And yes we can go beyond the ASCII:
