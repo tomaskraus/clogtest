@@ -68,7 +68,7 @@ const createFileWithInjectedSplitPrints = async (
     }, [])
     .join("\n");
   await fs.writeFile(injectedFileName, injectedContent);
-  log(`createFileWithInjectedPrints saved into [${injectedFileName}]`);
+  log(`createFileWithInjectedSplitPrints saved into [${injectedFileName}]`);
   return injectedFileName;
 };
 
@@ -89,7 +89,7 @@ const runSourceAndGatherOutputLines = (fileName) => {
     buff.end();
   }
   const outputLines = (buff.getContentsAsString() || "").split("\n");
-  log(`runFileAndGatherOutputLines: [${outputLines.length}] lines`);
+  log(`runSourceAndGatherOutputLines: [${outputLines.length}] lines`);
   return outputLines;
 };
 
@@ -111,7 +111,7 @@ const groupOutputBySplitMarks = (splitMark, outputLines) => {
     },
     ["", []]
   );
-  log(`groupOutput item count [${groups.length}]`);
+  log(`groupOutputBySplitMarks item count [${groups.length}]`);
   return groups;
 };
 
@@ -150,7 +150,7 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
       ...item,
       skip: item.expected.startsWith(SKIP_MARK),
     }));
-  log(`testInput item count [${testInputs.length}]`);
+  log(`createTestInputs item count [${testInputs.length}]`);
   return testInputs;
 };
 
@@ -165,8 +165,9 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
   const input = await loadInputFileLines(fileName);
   let tsInput = null;
   let splitMarkInjectedFileName = null;
+  log("getTestInputAndSource:");
   if (tsFileName) {
-    log(`typeScript file requested: [${tsFileName}]`);
+    log(`  typeScript file requested: [${tsFileName}]`);
     tsInput = await loadInputFileLines(tsFileName);
   }
   try {
@@ -184,9 +185,9 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
     return [testInputs, source];
   } finally {
     if (splitMarkInjectedFileName) {
-      log(`deleting temporary file [${splitMarkInjectedFileName}] ...`);
+      log(`  deleting temporary file [${splitMarkInjectedFileName}] ...`);
       await fs.rm(splitMarkInjectedFileName);
-      log(`... deleted: [${splitMarkInjectedFileName}]`);
+      log(`  ... deleted: [${splitMarkInjectedFileName}]`);
     }
   }
 };
@@ -199,7 +200,7 @@ const createUniqueSplitMark = () => {
 
 const testOneItem = ({ lineNumber, expected, received, skip }) => {
   log(
-    `  testOneItem  [${lineNumber}] ssp:[${expected}] input:[${received}] ${skip ? "--SKIPPED--" : ""}`
+    `  testOneItem  [${lineNumber}] pattern:[${expected}] output:[${received}] ${skip ? "--SKIPPED--" : ""}`
   );
 
   let pass = false;
