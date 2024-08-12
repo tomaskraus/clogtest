@@ -137,6 +137,7 @@ const prepareAssertionStr = (assertionMark, s) => {
  * @returns {object[]} [{lineNumber: number, linePadding: string, expected: string, received: string, skip: boolean}]
  */
 const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
+  const ASSERTION_MARK_SKIP = assertionMarkStr + SKIP_MARK;
   lineNumber = 1;
   groupIndex = 0;
   const isInCommentBlock = createBlockCommentPredicate();
@@ -153,12 +154,12 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
     )
     .map((item) => ({
       ...item,
-      expected: prepareAssertionStr(assertionMarkStr, item.expected),
-      received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
+      skip: item.expected.startsWith(ASSERTION_MARK_SKIP),
     }))
     .map((item) => ({
       ...item,
-      skip: item.expected.startsWith(SKIP_MARK),
+      expected: prepareAssertionStr(assertionMarkStr, item.expected),
+      received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
     }));
   log(`createTestInputs item count [${testInputs.length}]`);
   return testInputs;
@@ -171,7 +172,11 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
  * @param {string?} tsFileName
  * @returns {Promise<[[object], [string]]>}
  */
-const getTestInputAndSource = async (assertionMarkStr, fileName, tsFileName) => {
+const getTestInputAndSource = async (
+  assertionMarkStr,
+  fileName,
+  tsFileName
+) => {
   const input = await loadInputFileLines(fileName);
   let tsInput = null;
   let splitMarkInjectedFileName = null;
