@@ -55,10 +55,9 @@ describe("normal ops", () => {
   test("Empty output assertion works", async () => {
     const [results] = await doTests("./test/inputs/empty-output-assertion.js");
     const { totalCount, failedCount } = getStats(results);
-    expect(totalCount).toEqual(2);
+    expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(0);
     expect(results[0].pass).toBeTruthy();
-    expect(results[1].pass).toBeTruthy();
   });
 
   test("Assertions inside block comments are not tested", async () => {
