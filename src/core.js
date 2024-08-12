@@ -43,7 +43,7 @@ const createBlockCommentPredicate = () =>
  * @returns {Promise<string>} a name of a newly created file
  */
 const createFileWithInjectedSplitPrints = async (
-  testMark,
+  assertionMark,
   splitMark,
   inputFileName,
   inputFileLines
@@ -60,7 +60,7 @@ const createFileWithInjectedSplitPrints = async (
     .reduce((acc, line) => {
       if (!isInBlockComment(line)) {
         acc.push(line);
-        if (line.trimStart().startsWith(testMark)) {
+        if (line.trimStart().startsWith(assertionMark)) {
           acc.push(`console.log('${splitMark}')`);
         }
       }
@@ -125,18 +125,18 @@ const groupOutputBySplitMarks = (splitMark, outputLines) => {
   return groups;
 };
 
-const prepareAssertionStr = (testMark, s) => {
-  return s.slice(testMark.length).trim();
+const prepareAssertionStr = (assertionMark, s) => {
+  return s.slice(assertionMark.length).trim();
 };
 
 /**
  *
- * @param {string} testMarkStr
+ * @param {string} assertionMarkStr
  * @param {string[]} outputGroups
  * @param {string[]} inputFileLines
  * @returns {object[]} [{lineNumber: number, linePadding: string, expected: string, received: string, skip: boolean}]
  */
-const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
+const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
   lineNumber = 1;
   groupIndex = 0;
   const isInCommentBlock = createBlockCommentPredicate();
@@ -149,12 +149,12 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
     .filter(
       (item) =>
         !isInCommentBlock(item.expected) &&
-        item.expected.startsWith(testMarkStr)
+        item.expected.startsWith(assertionMarkStr)
     )
     .map((item) => ({
       ...item,
-      expected: prepareAssertionStr(testMarkStr, item.expected),
-      received: outputGroups[groupIndex++], // groups are as many as testMarks
+      expected: prepareAssertionStr(assertionMarkStr, item.expected),
+      received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
     }))
     .map((item) => ({
       ...item,
@@ -166,12 +166,12 @@ const createTestInputs = (testMarkStr, outputGroups, inputFileLines) => {
 
 /**
  *
- * @param {string} testMarkStr
+ * @param {string} assertionMarkStr
  * @param {string} fileName
  * @param {string?} tsFileName
  * @returns {Promise<[[object], [string]]>}
  */
-const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
+const getTestInputAndSource = async (assertionMarkStr, fileName, tsFileName) => {
   const input = await loadInputFileLines(fileName);
   let tsInput = null;
   let splitMarkInjectedFileName = null;
@@ -183,7 +183,7 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
   try {
     const splitMark = createUniqueSplitMark();
     splitMarkInjectedFileName = await createFileWithInjectedSplitPrints(
-      testMarkStr,
+      assertionMarkStr,
       splitMark,
       fileName,
       input
@@ -191,7 +191,7 @@ const getTestInputAndSource = async (testMarkStr, fileName, tsFileName) => {
     const output = runSourceAndGatherOutputLines(splitMarkInjectedFileName);
     const groups = groupOutputBySplitMarks(splitMark, output);
     const source = tsInput || input;
-    const testInputs = createTestInputs(testMarkStr, groups, source);
+    const testInputs = createTestInputs(assertionMarkStr, groups, source);
     return [testInputs, source];
   } finally {
     if (splitMarkInjectedFileName) {

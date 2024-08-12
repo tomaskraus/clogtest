@@ -5,7 +5,7 @@
 const Path = require("path");
 const { Command, createOption } = require("commander");
 
-const { doTestsAndPrintResults, writeAssertions } = require("./main");
+const logicProvider = require("./main");
 
 // ------------------------------------------
 
@@ -42,11 +42,17 @@ const jsDirOption = createOption(
   "directory of source's generated javascript file"
 ).default("dist");
 
+const customAssertionMarkOption = createOption(
+  "-m, --mark <assertionMark>",
+  "sets a custom assertion mark"
+).default("//=>");
+
 program
   .command("test")
   .alias("t")
   .argument("<source>", "source file with a code to be run")
   .addOption(jsDirOption)
+  .addOption(customAssertionMarkOption)
   .description(
     "Tests program's output against assertions comments (//=>) written in the program's source."
   )
@@ -59,9 +65,10 @@ program
     `
   )
   .action(async (source, options) => {
+    const logic = logicProvider(options.mark);
     process.exitCode = await safeRunner(
       async () =>
-        await doTestsAndPrintResults(
+        await logic.doTestsAndPrintResults(
           getJsFileName(source, options.jsDir),
           getSourceFileName(source)
         )
@@ -73,6 +80,7 @@ program
   .alias("w")
   .argument("<source>", "a javascript file with a code to be run")
   .addOption(jsDirOption)
+  .addOption(customAssertionMarkOption)
   .description(
     "Runs the code and writes corresponding parts of its output to those empty assertion comments (//=>) in the code source."
   )
@@ -84,9 +92,10 @@ program
     `
   )
   .action(async (source, options) => {
+    const logic = logicProvider(options.mark);
     process.exitCode = await safeRunner(
       async () =>
-        await writeAssertions(
+        await logic.writeAssertions(
           getJsFileName(source, options.jsDir),
           getSourceFileName(source)
         )

@@ -23,11 +23,11 @@ const srcName = (jsFileName, tsFileName) => {
 
 /**
  * Creates a tests performing function.
- * @param {string} testMark
+ * @param {string} assertionMark
  * @returns {(string, string | null) => [testResults[], string[]]} doTests function
  */
 const createDoTests =
-  (testMark) =>
+  (assertionMark) =>
   /**
    * Performs tests.
    * @param {string} fileName
@@ -36,7 +36,7 @@ const createDoTests =
    */
   async (fileName, tsFileName = null) => {
     const [testInputs, source] = await getTestInputAndSource(
-      testMark,
+      assertionMark,
       fileName,
       tsFileName
     );
@@ -68,25 +68,25 @@ const failedResultPredicate = (result) => !result.pass && !result.skip;
 
 /**
  * Creates an assertions-fill function.
- * @param {string} testMark
+ * @param {string} assertionMark
  * @returns {string, string | null, null | (string, number, string) => void}
  */
 const createFillAssertions =
-  (testMark) =>
+  (assertionMark) =>
   /**
    * Fills empty assertions with received output values.
    * @param {string} fileName
    * @param {string | null} tsFileName
-   * @param {null | (string, number, string) => void} onTestMarkFn callback function (srcFileName, lineNumber, line). called on every testMark line
+   * @param {null | (string, number, string) => void} onAssertionMarkFn callback function (srcFileName, lineNumber, line). called on every assertionMark line
    * @returns {[string[] ,number]} output lines, number of assertions filled.
    */
-  async (fileName, tsFileName = null, onTestMarkFn = null) => {
+  async (fileName, tsFileName = null, onAssertionMarkFn = null) => {
     const MAX_WRITTEN_PATTERN_LENGTH = 20;
 
     const srcFileName = srcName(fileName, tsFileName);
     log(`fillAssertions, from file: [${srcFileName}]`);
     const [testInputs, inputs] = await getTestInputAndSource(
-      testMark,
+      assertionMark,
       fileName,
       tsFileName
     );
@@ -103,15 +103,15 @@ const createFillAssertions =
         if (testInputs[testInputIndex].expected === "") {
           s =
             testInputs[testInputIndex].linePadding +
-            testMark +
+            assertionMark +
             " " +
             SSP.parse(testInputs[testInputIndex].received)
               .limitPatternLen(MAX_WRITTEN_PATTERN_LENGTH)
               .value();
           assertionsFilledCount++;
           log(`fill assertion [${lineNumber}] [${s}]`);
-          if (onTestMarkFn) {
-            onTestMarkFn(srcFileName, lineNumber, s);
+          if (onAssertionMarkFn) {
+            onAssertionMarkFn(srcFileName, lineNumber, s);
           }
         }
         testInputIndex++;
@@ -123,11 +123,11 @@ const createFillAssertions =
   };
 
 // ------------------------------------------------
-const DEFAULT_TEST_MARK = "//=>";
+const DEFAULT_ASSERTION_MARK = "//=>";
 
-// do not use trailing or leading spaces in testMark
-module.exports = (testMark = DEFAULT_TEST_MARK) => {
-  log(`Engine created with testMark: [${testMark}]`);
+// do not use trailing or leading spaces in assertionMark
+module.exports = (assertionMark = DEFAULT_ASSERTION_MARK) => {
+  log(`Engine created with an assertionMark: [${assertionMark}]`);
   return {
     srcName,
     /**
@@ -136,7 +136,7 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
      * @param {string | null} tsFileName
      * @returns {[testResults[], testResults[], testResults[], string[]]} [all results, failures, skipped, source content]
      */
-    doTests: createDoTests(testMark),
+    doTests: createDoTests(assertionMark),
     /**
      *
      * @param {object[]} results
@@ -147,16 +147,16 @@ module.exports = (testMark = DEFAULT_TEST_MARK) => {
      * Fills empty assertions with received output values.
      * @param {string} fileName
      * @param {string | null} tsFileName
-     * @param {null | (string, number, string) => void} onTestMarkFn callback function (srcFileName, lineNumber, line). called on every testMark line
+     * @param {null | (string, number, string) => void} onAssertionMarkFn callback function (srcFileName, lineNumber, line). called on every assertionMark line
      * @returns {[string[] ,number]} output lines, number of assertions filled.
      */
-    fillAssertions: createFillAssertions(testMark),
+    fillAssertions: createFillAssertions(assertionMark),
     /**
      *
      * @param {object} result
      * @returns true if result does not pass
      */
     failedResultPredicate,
-    testMark,
+    assertionMark,
   };
 };
