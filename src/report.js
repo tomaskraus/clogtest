@@ -73,7 +73,11 @@ const printFail =
 
       out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
       out(`  Pattern: \t\t\t"${cok(exppatt.value())}"`);
-      out(`  does not match the output: \t"${cerr(limitAndEscape(received))}"`);
+      const receivedOutput =
+        typeof received === "undefined"
+          ? typeof received
+          : `"${cerr(limitAndEscape(received))}"`; // non-undefined values are enclosed in double quotes
+      out(`  does not match the output: \t${receivedOutput}`);
     } else {
       out(`${cerr("!!!")} ${csh(inputFileName + ":" + lineNumber)}`);
       out(`${cerr("Error")}: ${errMsg}`);
