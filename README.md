@@ -175,3 +175,6 @@ or globally:
 ```bash
 $ npm i -g clogtest
 ```
+
+[1]: https://www.npmjs.com/package/markdown-doctest
+[2]: https://byexamples.github.io/byexample/languages/javascript
