@@ -125,11 +125,11 @@ describe("TypeScript", () => {
 
 // -------------------------------------------
 
-describe("Custom test mark:", () => {
+describe("Custom assertion mark:", () => {
   const { doTests } = engineFn("// Expected output:");
 
-  test("Works with custom test mark", async () => {
-    const [results] = await doTests("./test/inputs/custom-test-mark.js");
+  test("Works with custom assertion mark", async () => {
+    const [results] = await doTests("./test/inputs/custom-assertion-mark.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(8);
     expect(results[0].pass).toBeTruthy();
@@ -144,17 +144,17 @@ describe("Custom test mark:", () => {
     expect(failedCount).toEqual(1);
   });
 
-  test("Recognizes only custom test marks in the input", async () => {
+  test("Recognizes only custom assertion marks in the input", async () => {
     const [results] = await doTests("./test/inputs/one-true-one-false.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(0);
     expect(failedCount).toEqual(0);
   });
 
-  test("Skips custom test marks with skip mark", async () => {
+  test("Skips custom assertion marks with skip mark", async () => {
     const [results] = await doTests(
-      "./dist/test/inputs/custom-test-mark-skip.js",
-      "./test/inputs/custom-test-mark-skip.ts"
+      "./dist/test/inputs/custom-assertion-mark-skip.js",
+      "./test/inputs/custom-assertion-mark-skip.ts"
     );
     const { totalCount, failedCount, skippedCount, passedCount } =
       getStats(results);
@@ -174,9 +174,9 @@ describe("Custom test mark:", () => {
   });
 });
 
-describe("Skip test mark:", () => {
+describe("Skip assertion mark:", () => {
   test("Skips tests with skip-mark", async () => {
-    const [results] = await doTests("./test/inputs/skip-test-mark.js");
+    const [results] = await doTests("./test/inputs/skip-assertion-mark.js");
     const { totalCount, failedCount, passedCount, skippedCount } =
       getStats(results);
     expect(totalCount).toEqual(2);
