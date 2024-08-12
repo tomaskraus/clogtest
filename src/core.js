@@ -90,6 +90,7 @@ const runSourceAndGatherOutputLines = (fileName) => {
   }
   const outputLines = (buff.getContentsAsString() || "").split("\n");
   log(`runSourceAndGatherOutputLines: [${outputLines.length}] lines`);
+  log(outputLines);
   return outputLines;
 };
 
@@ -112,6 +113,7 @@ const groupOutputBySplitMarks = (splitMark, outputLines) => {
     ["", []]
   );
   log(`groupOutputBySplitMarks item count [${groups.length}]`);
+  log(groups);
   return groups;
 };
 
