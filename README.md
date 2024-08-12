@@ -115,7 +115,7 @@ $ npx clogtest test --jsDir dist examples/ts-example.ts
 
 By default, clogtest assumes the javascript files resides in the `dist` subdirectory in clogtest's current working dir. So, for most of the time, you don't need to even specify the `--jsDir` option.
 
-## Test Error-throwing code
+## Test Error-throwing Code
 
 **clogtest** can also test a code that throws an Error:
 
