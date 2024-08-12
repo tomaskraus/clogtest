@@ -44,27 +44,27 @@ clogtest test: examples/example.js
          1 | const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
          2 | console.log(result);
     >    3 | //=> [1, 2, 3, 4, 5]
-         4 | 
+         4 |
 
 ● examples/example.js:6
   Pattern:                      "" Wo""
   does not match the output:    " W"
 
          3 | //=> [1, 2, 3, 4, 5]
-         4 | 
+         4 |
          5 | console.log("Hello World".substring(5, 7));
     >    6 | //=> " Wo"
-         7 | 
+         7 |
 
 ● examples/example.js:12
   Pattern:                      "null"
   does not match the output:    "undefined"
 
          9 | //=> 2
-        10 | 
+        10 |
         11 | console.log({}.append);
     >   12 | //=> null
-        13 | 
+        13 |
 
 Tests:  3 failed, 1 passed, 4 total
 ```
@@ -114,6 +114,51 @@ $ npx clogtest test --jsDir dist examples/ts-example.ts
 ```
 
 By default, clogtest assumes the javascript files resides in the `dist` subdirectory in clogtest's current working dir. So, for most of the time, you don't need to even specify the `--jsDir` option.
+
+## Test Error-throwing code
+
+**clogtest** can also test a code that throws an Error:
+
+```js
+JSON.parse("abc");
+//=> ... not valid JSON
+```
+
+However, once an Error is thrown (without a catch), **clogtest** is not able to test subsequent assertions in that file:
+
+```js
+// following output meets the assertion below:
+console.log(123);
+//=> 123
+
+// output of the first error thrown meets the assertion below:
+JSON.parse("abc");
+//=> ... not valid JSON
+
+// because of an uncaught Error thrown, following code is not executed, so no further output is available to the clogtest tool
+
+// following output is undefined, so the (otherwise truthy) assertion below fails:
+console.log("hi");
+//=> hi
+```
+
+Should you test more errors thrown in one file, catch those errors and print them in the catch code block:
+
+```js
+try {
+  throw new Error("failure");
+} catch (err1) {
+  console.log(err1.message);
+  //=> failure
+}
+
+try {
+  JSON.parse("abc");
+} catch (err2) {
+  console.log(err2.message);
+  //=> ... not valid JSON
+}
+```
 
 ## Installation
 

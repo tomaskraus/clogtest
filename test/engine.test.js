@@ -45,6 +45,15 @@ describe("normal ops", () => {
     expect(fails[0].pass).toBeFalsy();
   });
 
+  test("input with assertions inside catch blocks works", async () => {
+    const [results] = await doTests("./test/inputs/multiple-error-success.js");
+    const { totalCount, failedCount } = getStats(results);
+    expect(totalCount).toEqual(2);
+    expect(failedCount).toEqual(0);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[1].pass).toBeTruthy();
+  });
+
   test("Fully block-commented code means empty results", async () => {
     const [results] = await doTests("./test/inputs/comment-all.js");
     const { totalCount, failedCount } = getStats(results);
@@ -214,7 +223,7 @@ describe("Source that throws Error:", () => {
     expect(results.length).toEqual(3);
     expect(results[0].pass).toBeTruthy();
     // test did not produce output for the rest of assertions
-    expect(results[1].pass).toBeFalsy();
+    expect(results[1].pass).toBeTruthy();
     expect(results[2].pass).toBeFalsy();
   });
 });
