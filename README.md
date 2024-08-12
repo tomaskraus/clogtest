@@ -158,6 +158,17 @@ console.log("絵文字: 😀.");
 //=> 絵文字: 😀.
 ```
 
+We can create assertion that does match a computed multi-line output:
+
+```js
+for (let i = 1; i < 4; i++) {
+  console.log(`#${i}`);
+}
+//=> #1\n#2\n#3
+
+// note that the End Of Line character is not present at the very end. Clogtest strips it for convenience.
+```
+
 For more about SSP format, see [Simple String Pattern documentation][1].
 
 ## TypeScript

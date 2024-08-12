@@ -33,6 +33,13 @@ describe("normal ops", () => {
     expect(failedCount).toEqual(0);
   });
 
+  test("tests computed multi-line output", async () => {
+    const [results] = await doTests("./test/inputs/computed-multi-line.js");
+    const { totalCount, passedCount } = getStats(results);
+    expect(totalCount).toEqual(1);
+    expect(passedCount).toEqual(1);
+  });
+
   test("input with two assertions means two results", async () => {
     const [results] = await doTests("./test/inputs/one-true-one-false.js");
     const { totalCount, failedCount } = getStats(results);
