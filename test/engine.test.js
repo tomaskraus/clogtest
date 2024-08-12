@@ -79,7 +79,7 @@ describe("normal ops", () => {
     expect(failedCount).toEqual(1);
   });
 
-  test("Empty Assertion fails.", async () => {
+  test("Assertion without a body fails.", async () => {
     const [results] = await doTests("./test/inputs/empty-assertion.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(2);
@@ -91,16 +91,19 @@ describe("normal ops", () => {
 });
 
 describe("error ops", () => {
-  test("Two consecutive assertions (i.e. without any output between them) are left unnoticed if there are some ececutable code lines between them.", async () => {
+  test("assertions-over-under-used", async () => {
     const [results] = await doTests(
-      "./test/inputs/err-consecutive-assertions-unnoticed.js"
+      "./test/inputs/assertions-over-under-used.js"
     );
-    const { totalCount, failedCount } = getStats(results);
-    expect(totalCount).toEqual(3);
+    const { totalCount } = getStats(results);
+    expect(totalCount).toEqual(7);
     expect(results[0].pass).toBeTruthy();
-    expect(results[1].expected).toEqual('""');
-    expect(results[1].pass).toBeTruthy();
-    expect(results[2].pass).toBeTruthy();
+    expect(results[1].pass).toBeFalsy();
+    expect(results[2].pass).toBeFalsy();
+    expect(results[3].pass).toBeTruthy();
+    expect(results[4].pass).toBeTruthy();
+    expect(results[5].pass).toBeTruthy();
+    expect(results[6].pass).toBeTruthy();
   });
 });
 
