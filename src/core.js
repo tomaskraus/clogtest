@@ -104,17 +104,17 @@ const runSourceAndGatherOutputLines = (fileName) => {
  */
 const groupOutputBySplitMarks = (splitMark, outputLines) => {
   let accMem = "";
-  const [_, groups] = outputLines.reduce(
-    ([currentOutputStr, outputArr], line) => {
+  const [_1, groups, _2] = outputLines.reduce(
+    ([currentOutputStr, outputArr, isStart], line) => {
       if (line.startsWith(splitMark)) {
         outputArr.push(currentOutputStr);
-        return ["", outputArr];
+        return ["", outputArr, true];
       }
-      currentOutputStr += currentOutputStr === "" ? line : "\n" + line;
+      currentOutputStr += isStart ? line : "\n" + line;
       accMem = currentOutputStr;
-      return [currentOutputStr, outputArr];
+      return [currentOutputStr, outputArr, false];
     },
-    ["", []]
+    ["", [], true]
   );
   const restOutput = accMem.trim();
   if (restOutput !== "" || groups.length === 0) {

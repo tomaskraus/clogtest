@@ -33,6 +33,13 @@ describe("normal ops", () => {
     expect(failedCount).toEqual(0);
   });
 
+  test("tests newlines", async () => {
+    const [results] = await doTests("./test/inputs/newlines.js");
+    const { totalCount, passedCount } = getStats(results);
+    expect(totalCount).toEqual(2);
+    expect(passedCount).toEqual(2);
+  });
+
   test("tests computed multi-line output", async () => {
     const [results] = await doTests("./test/inputs/computed-multi-line.js");
     const { totalCount, passedCount } = getStats(results);
