@@ -11,9 +11,9 @@
     "format:write": "npx prettier --write .",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
+    "compile": "npx tsc",
     "test": "npm run compile && jest --runInBand",
-    "lint": "npx eslint",
-    "compile": "npx tsc"
+    "lint": "npx eslint"
   },
   "keywords": [
     "test",
