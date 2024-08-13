@@ -230,6 +230,7 @@ describe("Source that throws Error:", () => {
   test("Tests error-throwing source:", async () => {
     const [results] = await doTests("./test/inputs/error-throwing.js");
     const { passedCount } = getStats(results);
+    expect(results[0].received).toMatch(/not valid JSON/);
     expect(passedCount).toEqual(1);
   });
 
