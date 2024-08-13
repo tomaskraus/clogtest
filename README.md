@@ -38,7 +38,7 @@ $ npx clogtest test examples/example.js
 ```
 clogtest test: examples/example.js
 ● examples/example.js:3
-  Pattern:                      "[1, 2, 3, 4, 5]"
+  Pattern:                      [1, 2, 3, 4, 5]
   does not match the output:    "[ 2, 4, 6, 8, 10 ]"
 
          1 | const result = [1, 2, 3, 4, 5].map((i) => 2 * i);
@@ -47,7 +47,7 @@ clogtest test: examples/example.js
          4 |
 
 ● examples/example.js:6
-  Pattern:                      "" Wo""
+  Pattern:                      " Wo"
   does not match the output:    " W"
 
          3 | //=> [1, 2, 3, 4, 5]
@@ -57,7 +57,7 @@ clogtest test: examples/example.js
          7 |
 
 ● examples/example.js:12
-  Pattern:                      "null"
+  Pattern:                      null
   does not match the output:    "undefined"
 
          9 | //=> 2
