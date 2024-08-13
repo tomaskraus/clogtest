@@ -1,5 +1,5 @@
-const { fillAssertions, assertionMark } = require("../src/engine")();
-
+const { fillAssertions, options } = require("../src/engine")();
+const assertionMark = options.assertionMark;
 // this suite does not work inside engine.test.js
 describe("write-assertions:", () => {
   let callbackCallCount = 0;

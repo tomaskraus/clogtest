@@ -4,9 +4,15 @@
 
 const SSP = require("simple-string-pattern").default;
 
-const { getTestInputAndSource, runTests } = require("./core.js");
+const {
+  getTestInputAndSource,
+  runTests,
+  getInjectedFileName,
+} = require("./core.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("engine");
+
+const DEFAULT_OPTIONS = { assertionMark: "//=>", keepTempFile: false };
 
 /**
  *
@@ -23,11 +29,11 @@ const srcName = (jsFileName, tsFileName) => {
 
 /**
  * Creates a tests performing function.
- * @param {string} assertionMark
+ * @param {{ assertionMark, keepTempFile }} options
  * @returns {(string, string | null) => [testResults[], string[]]} doTests function
  */
 const createDoTests =
-  (assertionMark) =>
+  ({ assertionMark, keepTempFile }) =>
   /**
    * Performs tests.
    * @param {string} fileName
@@ -36,7 +42,7 @@ const createDoTests =
    */
   async (fileName, tsFileName = null) => {
     const [testInputs, source] = await getTestInputAndSource(
-      assertionMark,
+      { assertionMark, keepTempFile },
       fileName,
       tsFileName
     );
@@ -68,11 +74,11 @@ const failedResultPredicate = (result) => !result.pass && !result.skip;
 
 /**
  * Creates an assertions-fill function.
- * @param {string} assertionMark
+ * @param {{ assertionMark, keepTempFile }} options
  * @returns {string, string | null, null | (string, number, string) => void}
  */
 const createFillAssertions =
-  (assertionMark) =>
+  ({ assertionMark, keepTempFile }) =>
   /**
    * Fills empty assertions with received output values.
    * @param {string} fileName
@@ -86,7 +92,7 @@ const createFillAssertions =
     const srcFileName = srcName(fileName, tsFileName);
     log(`fillAssertions, from file: [${srcFileName}]`);
     const [testInputs, inputs] = await getTestInputAndSource(
-      assertionMark,
+      { assertionMark, keepTempFile },
       fileName,
       tsFileName
     );
@@ -123,11 +129,11 @@ const createFillAssertions =
   };
 
 // ------------------------------------------------
-const DEFAULT_ASSERTION_MARK = "//=>";
 
 // do not use trailing or leading spaces in assertionMark
-module.exports = (assertionMark = DEFAULT_ASSERTION_MARK) => {
-  log(`Engine created with an assertionMark: [${assertionMark}]`);
+module.exports = (options = DEFAULT_OPTIONS) => {
+  const opts = { ...DEFAULT_OPTIONS, ...options };
+  log(`Engine created with these options: [${JSON.stringify(opts)}]`);
   return {
     srcName,
     /**
@@ -136,7 +142,7 @@ module.exports = (assertionMark = DEFAULT_ASSERTION_MARK) => {
      * @param {string | null} tsFileName
      * @returns {[testResults[], testResults[], testResults[], string[]]} [all results, failures, skipped, source content]
      */
-    doTests: createDoTests(assertionMark),
+    doTests: createDoTests(opts),
     /**
      *
      * @param {object[]} results
@@ -150,13 +156,14 @@ module.exports = (assertionMark = DEFAULT_ASSERTION_MARK) => {
      * @param {null | (string, number, string) => void} onAssertionMarkFn callback function (srcFileName, lineNumber, line). called on every assertionMark line
      * @returns {[string[] ,number]} output lines, number of assertions filled.
      */
-    fillAssertions: createFillAssertions(assertionMark),
+    fillAssertions: createFillAssertions(opts),
     /**
      *
      * @param {object} result
      * @returns true if result does not pass
      */
     failedResultPredicate,
-    assertionMark,
+    options,
+    getInjectedFileName,
   };
 };

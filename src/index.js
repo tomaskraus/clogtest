@@ -5,7 +5,7 @@
 const Path = require("path");
 const { Command, createOption } = require("commander");
 
-const logicProvider = require("./main");
+const businessLogicProvider = require("./main");
 
 // ------------------------------------------
 
@@ -47,12 +47,23 @@ const customAssertionMarkOption = createOption(
   "sets a custom assertion mark"
 ).default("//=>");
 
+const keepTempFileOption = createOption(
+  "-k, --keepTempFile",
+  "does not delete temporary .clogtest.*.js file after use"
+);
+
+const getBusinessLogicOptions = (options) => ({
+  assertionMark: options.mark,
+  keepTempFile: options.keepTempFile,
+});
+
 program
   .command("test")
   .alias("t")
   .argument("<source>", "source file with a code to be run")
   .addOption(jsDirOption)
   .addOption(customAssertionMarkOption)
+  .addOption(keepTempFileOption)
   .description(
     "runs the source and tests its output against assertions comments (//=>) written in it"
   )
@@ -65,10 +76,10 @@ program
     `
   )
   .action(async (source, options) => {
-    const logic = logicProvider(options.mark);
+    const businessLogic = businessLogicProvider(getBusinessLogicOptions(options));
     process.exitCode = await safeRunner(
       async () =>
-        await logic.doTestsAndPrintResults(
+        await businessLogic.doTestsAndPrintResults(
           getJsFileName(source, options.jsDir),
           getSourceFileName(source)
         )
@@ -81,6 +92,7 @@ program
   .argument("<source>", "a javascript file with a code to be run")
   .addOption(jsDirOption)
   .addOption(customAssertionMarkOption)
+  .addOption(keepTempFileOption)
   .description(
     "runs the source and writes corresponding parts of its output to those empty assertion comments (//=>) in the code source"
   )
@@ -92,10 +104,10 @@ program
     `
   )
   .action(async (source, options) => {
-    const logic = logicProvider(options.mark);
+    const businessLogic = businessLogicProvider(getBusinessLogicOptions(options));
     process.exitCode = await safeRunner(
       async () =>
-        await logic.writeAssertions(
+        await businessLogic.writeAssertions(
           getJsFileName(source, options.jsDir),
           getSourceFileName(source)
         )

@@ -18,8 +18,8 @@ const printHeader = (action, fileName) => {
   out(`${appName} ${action}: ${fileName}`);
 };
 
-const getLogic = (assertionMarkStr) => {
-  const engine = engineProvider(assertionMarkStr);
+const getBusinessLogic = (options) => {
+  const engine = engineProvider(options);
   return {
     doTestsAndPrintResults: async (fileName, tsFileName = null) => {
       log(`doTestsAndPrintResults: START ---------`);
@@ -55,4 +55,4 @@ const getLogic = (assertionMarkStr) => {
   };
 };
 
-module.exports = getLogic;
+module.exports = getBusinessLogic;

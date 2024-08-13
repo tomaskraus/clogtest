@@ -171,13 +171,13 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
 
 /**
  *
- * @param {string} assertionMarkStr
+ * @param {{assertionMark, keepTempFile}} options
  * @param {string} fileName
  * @param {string?} tsFileName
  * @returns {Promise<[[object], [string]]>}
  */
 const getTestInputAndSource = async (
-  assertionMarkStr,
+  { assertionMark, keepTempFile },
   fileName,
   tsFileName
 ) => {
@@ -192,7 +192,7 @@ const getTestInputAndSource = async (
   try {
     const splitMark = createUniqueSplitMark();
     splitMarkInjectedFileName = await createFileWithInjectedSplitPrints(
-      assertionMarkStr,
+      assertionMark,
       splitMark,
       fileName,
       input
@@ -200,13 +200,15 @@ const getTestInputAndSource = async (
     const output = runSourceAndGatherOutputLines(splitMarkInjectedFileName);
     const groups = groupOutputBySplitMarks(splitMark, output);
     const source = tsInput || input;
-    const testInputs = createTestInputs(assertionMarkStr, groups, source);
+    const testInputs = createTestInputs(assertionMark, groups, source);
     return [testInputs, source];
   } finally {
-    if (splitMarkInjectedFileName) {
+    if (splitMarkInjectedFileName && !keepTempFile) {
       log(`  deleting temporary file [${splitMarkInjectedFileName}] ...`);
       await fs.rm(splitMarkInjectedFileName);
       log(`  ... deleted: [${splitMarkInjectedFileName}]`);
+    } else {
+      log(`  keep temporary file [${splitMarkInjectedFileName}]`);
     }
   }
 };

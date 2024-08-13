@@ -1,6 +1,11 @@
-const engineFn = require("../src/engine");
+const engineProvider = require("../src/engine");
+const fs = require("fs/promises");
 
-const { doTests, srcName, getStats, failedResultPredicate } = engineFn();
+const keepTempFile = process.env.KEEP_TEMP_FILE === "1";
+
+const { doTests, srcName, getStats, failedResultPredicate } = engineProvider({
+  keepTempFile,
+});
 
 describe("srcName", () => {
   test("returns js file if ts is undefined", () => {
@@ -140,7 +145,10 @@ describe("TypeScript", () => {
 // -------------------------------------------
 
 describe("Custom assertion mark:", () => {
-  const { doTests } = engineFn("// Expected output:");
+  const { doTests } = engineProvider({
+    assertionMark: "// Expected output:",
+    keepTempFile,
+  });
 
   test("Works with custom assertion mark", async () => {
     const [results] = await doTests("./test/inputs/custom-assertion-mark.js");
@@ -243,5 +251,46 @@ describe("Source that throws Error:", () => {
     // test did not produce output for the rest of assertions
     expect(results[1].pass).toBeTruthy();
     expect(results[2].pass).toBeFalsy();
+  });
+});
+
+// --------------------------------------------
+
+describe("keepTempFile test", () => {
+  const { getInjectedFileName } = engineProvider();
+
+  const FILE_NAME = "./test/inputs/one-true-one-false.js";
+  const TEMP_FILE_NAME = getInjectedFileName(FILE_NAME);
+
+  beforeEach(async () => {
+    try {
+      await fs.rm(TEMP_FILE_NAME);
+    } catch (err) {
+      expect(err.message).toMatch(/ENOENT/);
+    }
+  });
+
+  test("does not delete the temporary file if keepTempFile property is set to true", async () => {
+    const { doTests } = engineProvider({ keepTempFile: true });
+
+    await doTests(FILE_NAME);
+
+    await expect(
+      fs.access(TEMP_FILE_NAME, fs.constants.F_OK)
+    ).resolves.toBeUndefined();
+  });
+
+  test("deletes the temporary file if keepTempFile property is set to default", async () => {
+    expect.assertions(2);
+    const { doTests } = engineProvider();
+
+    const [results] = await doTests(FILE_NAME);
+    expect(results.length).toEqual(2);
+
+    try {
+      await fs.access(TEMP_FILE_NAME, fs.constants.F_OK);
+    } catch (err) {
+      expect(err.code).toMatch("ENOENT");
+    }
   });
 });

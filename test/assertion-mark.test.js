@@ -1,6 +1,6 @@
-const engineFn = require("../src/engine");
+const engineProvider = require("../src/engine");
 
-const { doTests, getStats } = engineFn();
+const { doTests, getStats } = engineProvider();
 
 test("Cannot be fooled with printed assertion mark.", async () => {
   const [results] = await doTests("./test/inputs/print-assertion-mark.js");
