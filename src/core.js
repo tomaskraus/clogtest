@@ -83,7 +83,7 @@ const runSourceAndGatherOutputLines = (fileName) => {
   const myConsole = redirect(buff, process.stderr, true);
 
   try {
-    require(process.cwd() + Path.sep + fileName);
+    require(Path.join(process.cwd(), fileName));
   } catch (err) {
     console.log(err.message);
   } finally {
