@@ -133,8 +133,24 @@ Here are some SSP (Simple String Pattern) examples in the `//=>` assertions
 console.log(1 + 1);
 //=> 2
 
+// can handle true, false, null & undefined
 console.log(1 + 1 === 2);
 //=> true
+
+// enclose the pattern in double quotes to match leading and/or trailing spaces
+console.log(" hello ");
+//=> " hello "
+
+// Assertion body cannot be empty.
+// Use the "" pattern to match the empty output
+console.log("  ".trim());
+//=> ""
+
+// escape the first double quote to cancel the special meaning of outermost double quotes
+console.log('"TADAA!"');
+//=> \"TADAA!"
+console.log('""');
+//=> \""
 
 // Here, we only write the beginning of what we expect to be the output
 console.log("abcd".split(""));
