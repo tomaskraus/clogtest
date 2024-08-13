@@ -35,6 +35,13 @@ const createBlockCommentPredicate = () =>
     nthElementAfter(1, (s) => s.trimEnd().endsWith("*/"))
   );
 
+const getInjectedFileName = (fileName) => {
+  const parsedPath = Path.parse(fileName);
+  return Path.normalize(
+    Path.join(parsedPath.dir, `.clogtest.${parsedPath.name}${parsedPath.ext}`)
+  );
+};
+
 /**
  *
  * @param {string} splitMark
@@ -48,10 +55,7 @@ const createFileWithInjectedSplitPrints = async (
   inputFileName,
   inputFileLines
 ) => {
-  const parsedPath = Path.parse(inputFileName);
-  const injectedFileName = Path.normalize(
-    Path.join(parsedPath.dir, `.clogtest.${parsedPath.name}${parsedPath.ext}`)
-  );
+  const injectedFileName = getInjectedFileName(inputFileName);
   log(`creating injected file [${injectedFileName}]`);
 
   const isInBlockComment = createBlockCommentPredicate();
@@ -251,4 +255,5 @@ const runTests = (testInputs) => {
 module.exports = {
   getTestInputAndSource,
   runTests,
+  getInjectedFileName,
 };
