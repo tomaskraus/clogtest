@@ -72,7 +72,7 @@ const printFail =
       const exppatt = new SSP(expected);
 
       out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
-      out(`  Pattern: \t\t\t"${cok(exppatt.value())}"`);
+      out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
       const receivedOutput =
         typeof received === "undefined"
           ? typeof received
