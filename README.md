@@ -166,7 +166,7 @@ for (let i = 1; i < 4; i++) {
 }
 //=> #1\n#2\n#3
 
-// note that the End Of Line character is not present at the very end. Clogtest strips it for convenience.
+// note that the End Of Line character is not present at the very end of an output. Clogtest strips the output for our convenience.
 ```
 
 For more about SSP format, see [Simple String Pattern documentation][1].
