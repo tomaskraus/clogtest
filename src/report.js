@@ -51,6 +51,7 @@ const cwarn = chalk.yellow;
 const cok = chalk.green;
 const csh = chalk.blue;
 const csw = chalk.white.bold;
+const cdg = chalk.grey;
 
 const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
   const NUM_LINES_BEFORE = 3;
@@ -71,7 +72,7 @@ const printFail =
     if (!errMsg) {
       const exppatt = new SSP(expected);
 
-      out(`${cerr("●")} ${csh(inputFileName + ":" + lineNumber)}`);
+      out(`${cerr("●")} ${csh(inputFileName) + cdg(":" + lineNumber)}`);
       out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
       const receivedOutput =
         typeof received === "undefined"
