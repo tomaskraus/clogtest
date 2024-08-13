@@ -208,7 +208,7 @@ const getTestInputAndSource = async (
 };
 
 const createUniqueSplitMark = () => {
-  return crypto.randomUUID();
+  return "^" + crypto.randomUUID();
 };
 
 // ----------------------------------------------------------------
