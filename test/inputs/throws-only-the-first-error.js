@@ -4,7 +4,7 @@ console.log(123);
 
 // output of the first error thrown meets the assertion below:
 JSON.parse("abc");
-//=> ... not valid JSON
+//=> Unexpected token ...
 
 // because of an uncaught Error thrown, following code is not executed, so no further output is available to the clogtest tool
 

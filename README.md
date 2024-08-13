@@ -207,7 +207,7 @@ Clogtest may not work properly with minified and/or uglified \*.js files as clog
 
 ```js
 JSON.parse("abc");
-//=> ... not valid JSON
+//=> Unexpected token ...
 ```
 
 However, once an Error is thrown (without a catch), **clogtest** is not able to test subsequent assertions in that file:
@@ -219,7 +219,7 @@ console.log(123);
 
 // output of the first error thrown meets the assertion below:
 JSON.parse("abc");
-//=> ... not valid JSON
+//=> Unexpected token ...
 
 // because of an uncaught Error thrown, following code is not executed, so no further output is available to the clogtest tool
 
@@ -242,7 +242,7 @@ try {
   JSON.parse("abc");
 } catch (err2) {
   console.log(err2.message);
-  //=> ... not valid JSON
+  //=> Unexpected token ...
 }
 ```
 

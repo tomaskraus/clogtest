@@ -9,5 +9,5 @@ try {
   JSON.parse("abc");
 } catch (err2) {
   console.log(err2.message);
-  //=> ... not valid JSON
+  //=> Unexpected token ...
 }
