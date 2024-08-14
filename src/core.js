@@ -160,11 +160,16 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
       ...item,
       skip: item.expected.startsWith(ASSERTION_MARK_SKIP),
     }))
-    .map((item) => ({
-      ...item,
-      expected: prepareAssertionStr(assertionMarkStr, item.expected),
-      received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
-    }));
+    .map((item) => {
+      // if (groupIndex >= outputGroups.length) {
+      //   throw new Error()
+      // }
+      return {
+        ...item,
+        expected: prepareAssertionStr(assertionMarkStr, item.expected),
+        received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
+      };
+    });
   log(`createTestInputs item count [${testInputs.length}]`);
   return testInputs;
 };

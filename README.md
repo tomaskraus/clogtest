@@ -195,7 +195,7 @@ You can also test `.ts` files! The only thing **clogtest** needs to know is wher
 $ npx clogtest test --jsDir dist examples/ts-example.ts
 ```
 
-By default, clogtest assumes the javascript files resides in the `dist` subdirectory in clogtest's current working dir. So, for most of the time, you don't need to even specify the `--jsDir` option.> **Note**: Only the _Pattern Body_ is matched against the input
+By default, clogtest assumes the javascript files resides in the `dist` subdirectory in clogtest's current working dir. So, for most of the time, you don't need to even specify the `--jsDir` option.
 
 ## On Minified Javascript Files
 
