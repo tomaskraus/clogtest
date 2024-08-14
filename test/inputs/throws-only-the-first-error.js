@@ -11,3 +11,6 @@ JSON.parse("abc");
 // following output is undefined, so the (otherwise truthy) assertion below fails:
 console.log("hi");
 //=> hi
+
+// also undefined. Output does not even provide the string "undefined"
+//=> undefined

@@ -272,11 +272,14 @@ describe("Source that throws Error:", () => {
     const [results] = await doTests(
       "./test/inputs/throws-only-the-first-error.js"
     );
-    expect(results.length).toEqual(3);
+    expect(results.length).toEqual(4);
     expect(results[0].pass).toBeTruthy();
     // test did not produce output for the rest of assertions
     expect(results[1].pass).toBeTruthy();
     expect(results[2].pass).toBeFalsy();
+    expect(results[2].received).toBeUndefined();
+    expect(results[3].pass).toBeFalsy();
+    expect(results[3].received).toBeUndefined();
   });
 });
 
