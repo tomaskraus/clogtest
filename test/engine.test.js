@@ -109,20 +109,46 @@ describe("normal ops", () => {
   });
 });
 
-describe("error ops", () => {
-  test("assertions-over-under-used", async () => {
-    const [results] = await doTests(
-      "./test/inputs/assertions-over-under-used.js"
-    );
+// ------------------------------------------------
+
+describe("possible error ops", () => {
+  test("assertions-under-used", async () => {
+    const [results] = await doTests("./test/inputs/assertions-under-used.js");
     const { totalCount } = getStats(results);
-    expect(totalCount).toEqual(7);
+    expect(totalCount).toEqual(3);
     expect(results[0].pass).toBeTruthy();
     expect(results[1].pass).toBeFalsy();
+    expect(results[1].received).toMatch("1\n2");
     expect(results[2].pass).toBeFalsy();
+    expect(results[2].received).toMatch("3\n4");
+  });
+
+  test("assertions-over-used", async () => {
+    const [results] = await doTests("./test/inputs/assertions-over-used.js");
+    const { totalCount } = getStats(results);
+    expect(totalCount).toEqual(5);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[0].received).toEqual("");
+    expect(results[1].pass).toBeTruthy();
+    expect(results[1].received).toEqual("");
+    expect(results[2].pass).toBeTruthy();
+    expect(results[2].received).toEqual("123");
     expect(results[3].pass).toBeTruthy();
+    expect(results[3].received).toEqual("");
     expect(results[4].pass).toBeTruthy();
-    expect(results[5].pass).toBeTruthy();
-    expect(results[6].pass).toBeTruthy();
+    expect(results[4].received).toEqual("");
+  });
+
+  test("assertions-over-used-no-output", async () => {
+    const [results] = await doTests(
+      "./test/inputs/assertions-over-used-no-output.js"
+    );
+    const { totalCount } = getStats(results);
+    expect(totalCount).toEqual(2);
+    expect(results[0].pass).toBeTruthy();
+    expect(results[0].received).toEqual("");
+    expect(results[1].pass).toBeTruthy();
+    expect(results[1].received).toEqual("");
   });
 });
 
