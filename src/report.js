@@ -101,11 +101,11 @@ const printResume = ({
   log(`printResume:`);
 
   let str = `${totalCount} total`;
-  if (skippedCount > 0) {
-    str = `${cwarn.bold(skippedCount + " skipped")}, ${str}`;
-  }
   if (passedCount > 0) {
     str = `${cok.bold(passedCount + " passed")}, ${str}`;
+  }
+  if (skippedCount > 0) {
+    str = `${cwarn.bold(skippedCount + " skipped")}, ${str}`;
   }
   if (failedCount > 0) {
     str = `${cerr.bold(failedCount + " failed")}, ${str}`;
