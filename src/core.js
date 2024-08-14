@@ -169,6 +169,10 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
   return testInputs;
 };
 
+const createUniqueSplitMark = () => {
+  return "^" + crypto.randomUUID();
+};
+
 /**
  *
  * @param {{assertionMark, keepTempFile}} options
@@ -211,10 +215,6 @@ const getTestInputAndSource = async (
       log(`  keep temporary file [${splitMarkInjectedFileName}]`);
     }
   }
-};
-
-const createUniqueSplitMark = () => {
-  return "^" + crypto.randomUUID();
 };
 
 // ----------------------------------------------------------------
