@@ -167,10 +167,21 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
         received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
       };
     });
-  if (
+
+  const isEmptyOutput = outputGroups.length === 1 && outputGroups[0] === "";
+  if (!isEmptyOutput && outputGroups.length > testInputs.length) {
+    // unchecked output at the end
+    testInputs.push({
+      errMsg:
+        "There is a remaining output of the source. This output is not checked by any assertion: \n\n" +
+        outputGroups[outputGroups.length - 1],
+      lineNumber: lineNumber - 1,
+    });
+  } else if (
     testInputs.length > 0 &&
     typeof testInputs[testInputs.length - 1].received === "undefined"
   ) {
+    // starving assertions
     const lastWhichReceives = testInputs
       .filter((item) => item.received !== undefined)
       .slice(-1)[0];
@@ -181,6 +192,7 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
         lastWhichReceives.received,
     });
   }
+
   log(`createTestInputs item count [${testInputs.length}]`);
   return testInputs;
 };

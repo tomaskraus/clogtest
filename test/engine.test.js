@@ -31,11 +31,12 @@ describe("normal ops", () => {
     expect(failedCount).toEqual(0);
   });
 
-  test("input with no assertions means empty results", async () => {
+  test("non-empty input with no assertions is treated like an error", async () => {
     const [results] = await doTests("./test/inputs/no-assertions.js");
     const { totalCount, failedCount } = getStats(results);
-    expect(totalCount).toEqual(0);
-    expect(failedCount).toEqual(0);
+    expect(totalCount).toEqual(1);
+    expect(failedCount).toEqual(1);
+    expect(results[0].errMsg).toMatch("remaining output");
   });
 
   test("tests newlines", async () => {
@@ -235,24 +236,39 @@ describe("Skip assertion mark:", () => {
 // -------------------------------------------
 
 describe("Source that throws Error:", () => {
-  test("Syntaxically wrong source without any assertion means empty results:", async () => {
+  test("Syntaxically wrong source without any assertion means error result:", async () => {
     const [results] = await doTests(
       "./test/inputs/invalid-source-no-assertions.js"
     );
     const { totalCount, failedCount } = getStats(results);
-    expect(totalCount).toEqual(0);
-    expect(failedCount).toEqual(0);
+    expect(totalCount).toEqual(1);
+    expect(failedCount).toEqual(1);
+    expect(results[0].errMsg).toMatch("remaining output");
   });
 
-  test("Error-throwing source without any assertion means empty results:", async () => {
+  test("Error-throwing source without any assertion means error result:", async () => {
     const [results] = await doTests(
       "./test/inputs/error-throwing-source-no-assertions.js"
     );
     const { totalCount, failedCount } = getStats(results);
-    expect(totalCount).toEqual(0);
-    expect(failedCount).toEqual(0);
+    expect(totalCount).toEqual(1);
+    expect(failedCount).toEqual(1);
+    expect(results[0].errMsg).toMatch("remaining output");
   });
 
+  test("Error-throwing source with previous assertions means error result at the end:", async () => {
+    const [results] = await doTests(
+      "./test/inputs/error-throwing-source-with-prev-assertions.js"
+    );
+    const { totalCount, failedCount } = getStats(results);
+    expect(totalCount).toEqual(3); //assertions + error
+    expect(failedCount).toEqual(2);
+    expect(results[0].pass).toBeFalsy();
+    expect(results[1].pass).toBeTruthy();
+    expect(results[2].errMsg).toMatch("remaining output");
+  });
+
+  // ----------
   test("Tests the error output of syntaxically wrong source:", async () => {
     const [results] = await doTests("./test/inputs/invalid-source.js");
     const { passedCount } = getStats(results);
@@ -265,8 +281,9 @@ describe("Source that throws Error:", () => {
     expect(results[0].received).toMatch(/Unexpected token/);
     expect(passedCount).toEqual(1);
   });
+  // ----------
 
-  test("Valid test until the first error-throw only:", async () => {
+  test("Valid test until the first error-throw only. Returns error.", async () => {
     const [results] = await doTests(
       "./test/inputs/throws-only-the-first-error.js"
     );
