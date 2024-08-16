@@ -69,10 +69,11 @@ const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
 const printFail =
   (inputFileName, outputLines) =>
   ({ lineNumber, expected, received, errMsg }) => {
+    const lineInfo = csh(inputFileName) + cdg(":" + lineNumber);
     if (!errMsg) {
       const exppatt = new SSP(expected);
 
-      out(`${cerr("●")} ${csh(inputFileName) + cdg(":" + lineNumber)}`);
+      out(`${cerr("●")} ${lineInfo}`);
       out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
       const receivedOutput =
         typeof received === "undefined"
@@ -80,7 +81,7 @@ const printFail =
           : `"${cerr(limitAndEscape(received))}"`; // non-undefined values are enclosed in double quotes
       out(`  does not match the output: \t${receivedOutput}`);
     } else {
-      out(`${cerr("!!!")} ${csh(inputFileName + ":" + lineNumber)}`);
+      out(`${cerr("!!!")} ${lineInfo}`);
       out(`${cerr("Error")}: ${errMsg}`);
     }
     out("");
