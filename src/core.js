@@ -175,7 +175,7 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
       errMsg:
         "There is a remaining output of the source. This output is not checked by any assertion: \n\n" +
         outputGroups[outputGroups.length - 1],
-      lineNumber: lineNumber - 1,
+      lineNumber: -1,
     });
   } else if (
     testInputs.length > 0 &&

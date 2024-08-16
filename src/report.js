@@ -69,7 +69,8 @@ const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
 const printFail =
   (inputFileName, outputLines) =>
   ({ lineNumber, expected, received, errMsg }) => {
-    const lineInfo = csh(inputFileName) + cdg(":" + lineNumber);
+    const lineInfo =
+      csh(inputFileName) + (lineNumber > 0 ? cdg(":" + lineNumber) : "");
     if (!errMsg) {
       const exppatt = new SSP(expected);
 
@@ -84,8 +85,10 @@ const printFail =
       out(`${cerr("!!!")} ${lineInfo}`);
       out(`${cerr("Error")}: ${errMsg}`);
     }
-    out("");
-    printSourceLinesAround(outputLines, "    ", lineNumber);
+    if (lineNumber > 0) {
+      out("");
+      printSourceLinesAround(outputLines, "    ", lineNumber);
+    }
     out("");
   };
 
