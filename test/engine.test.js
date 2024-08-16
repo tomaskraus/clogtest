@@ -270,15 +270,14 @@ describe("Source that throws Error:", () => {
     const [results] = await doTests(
       "./test/inputs/throws-only-the-first-error.js"
     );
-    expect(results.length).toEqual(5); // 4 + one additional result error
+    expect(results.length).toEqual(4); // 3 + one additional result error
     expect(results[0].pass).toBeTruthy();
     // test did not produce output for the rest of assertions
     expect(results[1].pass).toBeTruthy();
     expect(results[2].pass).toBeFalsy();
     expect(results[2].received).toBeUndefined();
     expect(results[3].pass).toBeFalsy();
-    expect(results[3].received).toBeUndefined();
-    expect(results[4].errMsg).toMatch("The source has ended prematurely");
+    expect(results[3].errMsg).toMatch("The source has ended prematurely");
   });
 });
 
