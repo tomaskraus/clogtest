@@ -161,15 +161,26 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
       skip: item.expected.startsWith(ASSERTION_MARK_SKIP),
     }))
     .map((item) => {
-      // if (groupIndex >= outputGroups.length) {
-      //   throw new Error()
-      // }
       return {
         ...item,
         expected: prepareAssertionStr(assertionMarkStr, item.expected),
         received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
       };
     });
+  if (
+    testInputs.length > 0 &&
+    typeof testInputs[testInputs.length - 1].received === "undefined"
+  ) {
+    const lastWhichReceives = testInputs
+      .filter((item) => item.received !== undefined)
+      .slice(-1)[0];
+    testInputs.push({
+      lineNumber: lastWhichReceives.lineNumber,
+      errMsg:
+        "The source has ended prematurely, with no test inputs for remaining assertions. Probably an Error was thrown and not caught. \nSource's last output: \n\n" +
+        lastWhichReceives.received,
+    });
+  }
   log(`createTestInputs item count [${testInputs.length}]`);
   return testInputs;
 };
@@ -224,15 +235,16 @@ const getTestInputAndSource = async (
 
 // ----------------------------------------------------------------
 
-const testOneItem = ({ lineNumber, expected, received, skip }) => {
+const testOneItem = ({ lineNumber, expected, received, skip, errMsg }) => {
   log(
     `  testOneItem  [${lineNumber}] pattern:[${expected}] output:[${received}] ${skip ? "--SKIPPED--" : ""}`
   );
 
   let pass = false;
-  let errMsg = undefined;
   try {
-    pass = new SSP(expected).test(received);
+    if (!errMsg) {
+      pass = new SSP(expected).test(received);
+    }
   } catch (err) {
     errMsg = err.message;
   }

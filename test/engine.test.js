@@ -144,11 +144,9 @@ describe("possible error ops", () => {
       "./test/inputs/assertions-over-used-no-output.js"
     );
     const { totalCount } = getStats(results);
-    expect(totalCount).toEqual(2);
+    expect(totalCount).toEqual(1);
     expect(results[0].pass).toBeTruthy();
     expect(results[0].received).toEqual("");
-    expect(results[1].pass).toBeTruthy();
-    expect(results[1].received).toEqual("");
   });
 });
 
@@ -272,7 +270,7 @@ describe("Source that throws Error:", () => {
     const [results] = await doTests(
       "./test/inputs/throws-only-the-first-error.js"
     );
-    expect(results.length).toEqual(4);
+    expect(results.length).toEqual(5); // 4 + one additional result error
     expect(results[0].pass).toBeTruthy();
     // test did not produce output for the rest of assertions
     expect(results[1].pass).toBeTruthy();
@@ -280,6 +278,7 @@ describe("Source that throws Error:", () => {
     expect(results[2].received).toBeUndefined();
     expect(results[3].pass).toBeFalsy();
     expect(results[3].received).toBeUndefined();
+    expect(results[4].errMsg).toMatch("The source has ended prematurely");
   });
 });
 
@@ -288,24 +287,16 @@ describe("Source that throws Error:", () => {
 describe("keepTempFile test", () => {
   const { getInjectedFileName } = engineProvider();
 
-  const FILE_NAME = "./test/inputs/one-true-one-false.js";
-  const TEMP_FILE_NAME = getInjectedFileName(FILE_NAME);
-
-  beforeEach(async () => {
-    try {
-      await fs.rm(TEMP_FILE_NAME);
-    } catch (err) {
-      expect(err.message).toMatch(/ENOENT/);
-    }
-  });
-
   test("does not delete the temporary file if keepTempFile property is set to true", async () => {
     const { doTests } = engineProvider({ keepTempFile: true });
 
-    await doTests(FILE_NAME);
+    await doTests("test/inputs/keep-temp-1.js");
 
     await expect(
-      fs.access(TEMP_FILE_NAME, fs.constants.F_OK)
+      fs.access(
+        getInjectedFileName("test/inputs/keep-temp-1.js"),
+        fs.constants.F_OK
+      )
     ).resolves.toBeUndefined();
   });
 
@@ -313,11 +304,14 @@ describe("keepTempFile test", () => {
     expect.assertions(2);
     const { doTests } = engineProvider();
 
-    const [results] = await doTests(FILE_NAME);
+    const [results] = await doTests("test/inputs/keep-temp-2.js");
     expect(results.length).toEqual(2);
 
     try {
-      await fs.access(TEMP_FILE_NAME, fs.constants.F_OK);
+      await fs.access(
+        getInjectedFileName("test/inputs/keep-temp-2.js"),
+        fs.constants.F_OK
+      );
     } catch (err) {
       expect(err.code).toMatch("ENOENT");
     }
