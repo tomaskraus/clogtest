@@ -23,7 +23,7 @@ const log = appLog.extend("report");
 /**
  * output
  */
-const out = console.error;
+const print = console.error;
 
 const limitAndEscape = (str) => {
   const MAX_OUTPUT_BODY_LENGTH = 60;
@@ -62,7 +62,7 @@ const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
   for (let i = start; i < end; i++) {
     const isPatternLine = i + 1 === lineNumber;
     const text = `${paddingStr}${isPatternLine ? ">" : " "}${(i + 1).toString().padStart(5)} | ${lines[i]}`;
-    out(isPatternLine ? csw(text) : text);
+    print(isPatternLine ? csw(text) : text);
   }
 };
 
@@ -74,22 +74,22 @@ const printFail =
     if (!errMsg) {
       const exppatt = new SSP(expected);
 
-      out(`${cerr("●")} ${lineInfo}`);
-      out(`  Pattern: \t\t\t${cok(exppatt.value())}`);
+      print(`${cerr("●")} ${lineInfo}`);
+      print(`  Pattern: \t\t\t${cok(exppatt.value())}`);
       const receivedOutput =
         typeof received === "undefined"
           ? typeof received
           : `"${cerr(limitAndEscape(received))}"`; // non-undefined values are enclosed in double quotes
-      out(`  does not match the output: \t${receivedOutput}`);
+      print(`  does not match the output: \t${receivedOutput}`);
     } else {
-      out(`${cerr("!!!")} ${lineInfo}`);
-      out(`${cerr("Error")}: ${errMsg}`);
+      print(`${cerr("!!!")} ${lineInfo}`);
+      print(`${cerr("Error")}: ${errMsg}`);
     }
     if (lineNumber > 0) {
-      out("");
+      print("");
       printSourceLinesAround(outputLines, "    ", lineNumber);
     }
-    out("");
+    print("");
   };
 
 /**
@@ -115,12 +115,12 @@ const printResume = ({
     str = `${cerr.bold(failedCount + " failed")}, ${str}`;
   }
 
-  out(`Tests: \t${str}`);
+  print(`Tests: \t${str}`);
   log(`printResume: END`);
 };
 
 module.exports = {
   printFails,
   printResume,
-  out,
+  print,
 };

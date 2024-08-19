@@ -6,7 +6,7 @@
 const fs = require("fs/promises");
 
 const engineProvider = require("./engine.js");
-const { printFails, printResume, out } = require("./report.js");
+const { printFails, printResume, print } = require("./report.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("main");
 
@@ -15,7 +15,7 @@ const appName = require("../package.json").name;
 // ------------------
 
 const printHeader = (action, fileName) => {
-  out(`${appName} ${action}: ${fileName}`);
+  print(`${appName} ${action}: ${fileName}`);
 };
 
 const getBusinessLogic = (options) => {
@@ -36,7 +36,7 @@ const getBusinessLogic = (options) => {
       log(`writeAssertions: START ----------`);
 
       const printLineHandler = (fileName, lineNumber, line) =>
-        out(`\t${fileName}:${lineNumber}\t${line.trim()}`);
+        print(`\t${fileName}:${lineNumber}\t${line.trim()}`);
 
       const sourceFileName = engine.srcName(fileName, tsFileName);
       printHeader("write-assertions", sourceFileName);
@@ -45,7 +45,7 @@ const getBusinessLogic = (options) => {
         tsFileName,
         printLineHandler
       );
-      out(`${assertionsFilledCount} assertion comment(s) written.`);
+      print(`${assertionsFilledCount} assertion comment(s) written.`);
       if (assertionsFilledCount > 0) {
         log(`Writing filled assertions to [${sourceFileName}}]`);
         await fs.writeFile(sourceFileName, content.join("\n"));
