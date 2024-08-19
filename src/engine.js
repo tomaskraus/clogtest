@@ -164,6 +164,7 @@ module.exports = (options = DEFAULT_OPTIONS) => {
      */
     failedResultPredicate,
     options,
+    DEFAULT_OPTIONS,
     getInjectedFileName,
   };
 };
