@@ -23,8 +23,8 @@ const getSourceFileName = (fileName) =>
 const safeRunner = async (asyncFn) => {
   const DEFAULT_RET_CODE = 1;
   try {
-    const result = await asyncFn();
-    return result;
+    const code = await asyncFn();
+    return code;
   } catch (err) {
     const err2 = new Error(err.message, { cause: err });
     console.log(err2);
@@ -76,13 +76,14 @@ program
     `
   )
   .action(async (source, options) => {
-    const businessLogic = businessLogicProvider(getBusinessLogicOptions(options));
-    process.exitCode = await safeRunner(
-      async () =>
-        await businessLogic.doTestsAndPrintResults(
-          getJsFileName(source, options.jsDir),
-          getSourceFileName(source)
-        )
+    const businessLogic = businessLogicProvider(
+      getBusinessLogicOptions(options)
+    );
+    process.exitCode = await safeRunner(() =>
+      businessLogic.doTestsAndPrintResults(
+        getJsFileName(source, options.jsDir),
+        getSourceFileName(source)
+      )
     );
   });
 
@@ -104,13 +105,14 @@ program
     `
   )
   .action(async (source, options) => {
-    const businessLogic = businessLogicProvider(getBusinessLogicOptions(options));
-    process.exitCode = await safeRunner(
-      async () =>
-        await businessLogic.writeAssertions(
-          getJsFileName(source, options.jsDir),
-          getSourceFileName(source)
-        )
+    const businessLogic = businessLogicProvider(
+      getBusinessLogicOptions(options)
+    );
+    process.exitCode = await safeRunner(() =>
+      businessLogic.writeAssertions(
+        getJsFileName(source, options.jsDir),
+        getSourceFileName(source)
+      )
     );
   });
 
