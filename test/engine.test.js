@@ -39,7 +39,7 @@ describe("normal ops", () => {
     expect(results[0].errMsg).toMatch("remaining output");
   });
 
-  test("tests newlines", async () => {
+  test("newline assertions work", async () => {
     const [results] = await doTests("./test/inputs/newlines.js");
     const { totalCount, passedCount } = getStats(results);
     expect(totalCount).toEqual(2);
@@ -238,7 +238,7 @@ describe("Skip assertion mark:", () => {
 describe("Source that throws Error:", () => {
   test("Syntaxically wrong source without any assertion means error result:", async () => {
     const [results] = await doTests(
-      "./test/inputs/invalid-source-no-assertions.js"
+      "./test/inputs/invalid-source-unasserted.js"
     );
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
@@ -269,21 +269,21 @@ describe("Source that throws Error:", () => {
   });
 
   // ----------
-  test("Tests the error output of syntaxically wrong source:", async () => {
-    const [results] = await doTests("./test/inputs/invalid-source.js");
+  test("Tests the error output of syntaxically wrong source, asserted:", async () => {
+    const [results] = await doTests("./test/inputs/invalid-source-asserted.js");
     const { passedCount } = getStats(results);
     expect(passedCount).toEqual(1);
   });
 
-  test("Tests error-throwing source:", async () => {
-    const [results] = await doTests("./test/inputs/error-throwing.js");
+  test("Tests error-throwing asserted source:", async () => {
+    const [results] = await doTests("./test/inputs/error-throwing-asserted.js");
     const { passedCount } = getStats(results);
     expect(results[0].received).toMatch(/Unexpected token/);
     expect(passedCount).toEqual(1);
   });
   // ----------
 
-  test("Valid test until the first error-throw only. Returns error.", async () => {
+  test("Valid test until the first error-throw only. Even if that error does match the assertion, if there are more assertions after that, returns error.", async () => {
     const [results] = await doTests(
       "./test/inputs/throws-only-the-first-error.js"
     );
