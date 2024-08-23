@@ -32,7 +32,9 @@ describe("normal ops", () => {
   });
 
   test("non-empty input with no assertions is treated like an error", async () => {
-    const [results] = await doTests("./test/inputs/no-assertions.js");
+    const [results] = await doTests(
+      "./test/inputs/no-assertions-and-some-output.js"
+    );
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(1);
@@ -248,7 +250,7 @@ describe("Source that throws Error:", () => {
 
   test("Error-throwing source without any assertion means error result:", async () => {
     const [results] = await doTests(
-      "./test/inputs/error-throwing-source-no-assertions.js"
+      "./test/inputs/error-throwing-source-unasserted.js"
     );
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
