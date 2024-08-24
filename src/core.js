@@ -121,7 +121,7 @@ const groupOutputBySplitMarks = (splitMark, outputLines) => {
     ["", [], true]
   );
   const restOutput = accMem.trim();
-  if (restOutput !== "" || groups.length === 0) {
+  if (restOutput !== "") {
     groups.push(restOutput);
   }
   log(`groupOutputBySplitMarks item count [${groups.length}]`);
