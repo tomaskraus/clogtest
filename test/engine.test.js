@@ -31,14 +31,21 @@ describe("normal ops", () => {
     expect(failedCount).toEqual(0);
   });
 
-  test("non-empty input with no assertions is treated like an error", async () => {
+  test("non-empty input with no assertions returns empty result", async () => {
     const [results] = await doTests(
       "./test/inputs/no-assertions-and-some-output.js"
     );
-    const { totalCount, failedCount } = getStats(results);
+    const { totalCount } = getStats(results);
+    expect(totalCount).toEqual(0);
+  });
+
+  test("non-empty input with some output after the succeeded assertion does NOT throw an `unchecked output error`", async () => {
+    const [results] = await doTests(
+      "./test/inputs/some-output-after-assertion.js"
+    );
+    const { totalCount } = getStats(results);
     expect(totalCount).toEqual(1);
-    expect(failedCount).toEqual(1);
-    expect(results[0].errMsg).toMatch("remaining output");
+    expect(results[0].pass).toBeTruthy();
   });
 
   test("newline assertions work", async () => {
@@ -245,7 +252,7 @@ describe("Source that throws Error:", () => {
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(1);
-    expect(results[0].errMsg).toMatch("remaining output");
+    expect(results[0].errMsg).toMatch("error");
   });
 
   test("Error-throwing source without any assertion means error result:", async () => {
