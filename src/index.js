@@ -57,6 +57,34 @@ const getBusinessLogicOptions = (options) => ({
   keepTempFile: options.keepTempFile,
 });
 
+// -----------
+
+program
+  .command("check")
+  .alias("c")
+  .argument("<source>", "a javascript file with a code to be run")
+  .addOption(jsDirOption)
+  .addOption(keepTempFileOption)
+  .description("runs the source and checks for errors")
+  .addHelpText(
+    "after",
+    `example: 
+    clogtest check ./examples.js
+    clogtest check --jsDir dist ./examples/ts-example.ts
+    `
+  )
+  .action(async (source, options) => {
+    const businessLogic = businessLogicProvider(
+      getBusinessLogicOptions(options)
+    );
+    process.exitCode = await safeRunner(() =>
+      businessLogic.check(
+        getJsFileName(source, options.jsDir),
+        getSourceFileName(source)
+      )
+    );
+  });
+
 program
   .command("test")
   .alias("t")
@@ -100,9 +128,9 @@ program
   .addHelpText(
     "after",
     `example: 
-    clogtest write ./examples.js
-    clogtest write --jsDir dist ./examples/ts-example.ts
-    `
+      clogtest write ./examples.js
+      clogtest write --jsDir dist ./examples/ts-example.ts
+      `
   )
   .action(async (source, options) => {
     const businessLogic = businessLogicProvider(

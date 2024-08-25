@@ -21,6 +21,15 @@ const printHeader = (action, fileName) => {
 const getBusinessLogic = (options) => {
   const engine = engineProvider(options);
   return {
+    check: async (fileName, tsFileName = null) => {
+      log(`check: START ---------`);
+      printHeader("check", engine.srcName(fileName, tsFileName));
+
+      log(`check: END - - - - -`);
+      const fails = [];
+      return fails.length === 0 ? 0 : 1;
+    },
+
     doTestsAndPrintResults: async (fileName, tsFileName = null) => {
       log(`doTestsAndPrintResults: START ---------`);
       printHeader("test", engine.srcName(fileName, tsFileName));
