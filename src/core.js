@@ -14,6 +14,7 @@ const { switchTrueFalse, nthElementAfter } = require("stateful-predicates");
 const SSP = require("simple-string-pattern").default;
 
 const { appLog, getPaddingStr } = require("./utils.js");
+const { default: test } = require("node:test");
 const log = appLog.extend("core");
 
 const SKIP_MARK = "#";
@@ -83,12 +84,14 @@ const createFileWithInjectedSplitPrints = async (
  */
 const runSourceAndGatherOutputLines = (fileName) => {
   log(`runFile [${fileName}]`);
+  let error = null;
   const buff = new streamBuffers.WritableStreamBuffer();
   const myConsole = redirect(buff, process.stderr, true);
 
   try {
     require(Path.join(process.cwd(), fileName));
   } catch (err) {
+    error = err;
     console.log(err.message);
   } finally {
     myConsole.release();
@@ -97,14 +100,14 @@ const runSourceAndGatherOutputLines = (fileName) => {
   const outputLines = (buff.getContentsAsString() || "").split("\n");
   log(`runSourceAndGatherOutputLines: [${outputLines.length}] lines`);
   log(outputLines);
-  return outputLines;
+  return [outputLines, error];
 };
 
 /**
  *
  * @param {string} splitMark
- * @param {[string]} outputLines
- * @returns {[string]}
+ * @param {string[]} outputLines
+ * @returns {[string[], string]}
  */
 const groupOutputBySplitMarks = (splitMark, outputLines) => {
   let accMem = "";
@@ -121,12 +124,10 @@ const groupOutputBySplitMarks = (splitMark, outputLines) => {
     ["", [], true]
   );
   const restOutput = accMem.trim();
-  if (restOutput !== "") {
-    groups.push(restOutput);
-  }
   log(`groupOutputBySplitMarks item count [${groups.length}]`);
   log(groups);
-  return groups;
+  log(`groupOutput rest: [${restOutput}]`);
+  return [groups, restOutput];
 };
 
 const prepareAssertionStr = (assertionMark, s) => {
@@ -137,15 +138,21 @@ const prepareAssertionStr = (assertionMark, s) => {
  *
  * @param {string} assertionMarkStr
  * @param {string[]} outputGroups
- * @param {string[]} inputFileLines
+ * @param {string[]} sourceLines
  * @returns {object[]} [{lineNumber: number, linePadding: string, expected: string, received: string, skip: boolean}]
  */
-const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
+const createTestInputs = (
+  assertionMarkStr,
+  outputGroups,
+  restOutput,
+  sourceLines,
+  wasErrorFromInput
+) => {
   const ASSERTION_MARK_SKIP = assertionMarkStr + SKIP_MARK;
   lineNumber = 1;
   groupIndex = 0;
   const isInCommentBlock = createBlockCommentPredicate();
-  const testInputs = inputFileLines
+  const testInputs = sourceLines
     .map((line) => ({
       lineNumber: lineNumber++,
       linePadding: getPaddingStr(line),
@@ -164,31 +171,37 @@ const createTestInputs = (assertionMarkStr, outputGroups, inputFileLines) => {
       return {
         ...item,
         expected: prepareAssertionStr(assertionMarkStr, item.expected),
-        received: outputGroups[groupIndex++], // groups are at least as many as assertion Marks
+        received: outputGroups[groupIndex++], // group count is always less or equals assertion Mark count
       };
     });
 
-  const isEmptyOutput = outputGroups.length === 1 && outputGroups[0] === "";
-  if (!isEmptyOutput && outputGroups.length > testInputs.length) {
-    // unchecked output at the end
+  if (testInputs.length === outputGroups.length && wasErrorFromInput) {
+    // the last output item is an error one
     testInputs.push({
       errMsg:
-        "There is a remaining output of the source. This output is not checked by any assertion: \n\n" +
-        outputGroups[outputGroups.length - 1],
+        "There is an error thrown which is not checked against any assertion: \n\n" +
+        restOutput,
       lineNumber: -1,
     });
-  } else if (
-    testInputs.length > 0 &&
-    typeof testInputs[testInputs.length - 1].received === "undefined"
-  ) {
-    // starving assertions
-    const lastWhichReceives = testInputs
-      .filter((item) => item.received !== undefined)
-      .slice(-1)[0];
+  }
+
+  // if there is more assertions in the source than outputGroups count, use the rest parameter
+  const itemsUndefinedReceived = testInputs.filter(
+    (item) => item.received === undefined
+  );
+  if (itemsUndefinedReceived.length > 0) {
+    //does work because of shallow copy
+    itemsUndefinedReceived[0].received = restOutput;
+  }
+
+  // look for error that was thrown before all assertion marks were consumed
+  if (itemsUndefinedReceived.length > 1) {
+    const lastWhichReceives =
+      testInputs[testInputs.length - itemsUndefinedReceived.length].lineNumber;
     testInputs.push({
-      lineNumber: lastWhichReceives.lineNumber,
+      lineNumber: lastWhichReceives,
       errMsg:
-        "The source has ended prematurely, with no test inputs for remaining assertions. Probably an Error was thrown and not caught. \nSource's last output: \n\n" +
+        "The source has ended prematurely, with no test inputs for remaining assertions. Probably an Error was thrown and not caught. \nSource's last output was before the line: \n\n" +
         lastWhichReceives.received,
     });
   }
@@ -229,10 +242,18 @@ const getTestInputAndSource = async (
       fileName,
       input
     );
-    const output = runSourceAndGatherOutputLines(splitMarkInjectedFileName);
-    const groups = groupOutputBySplitMarks(splitMark, output);
+    const [output, error] = runSourceAndGatherOutputLines(
+      splitMarkInjectedFileName
+    );
+    const [groups, rest] = groupOutputBySplitMarks(splitMark, output);
     const source = tsInput || input;
-    const testInputs = createTestInputs(assertionMark, groups, source);
+    const testInputs = createTestInputs(
+      assertionMark,
+      groups,
+      rest,
+      source,
+      error !== null
+    );
     return [testInputs, source];
   } finally {
     if (splitMarkInjectedFileName && !keepTempFile) {

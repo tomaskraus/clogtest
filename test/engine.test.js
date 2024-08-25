@@ -245,7 +245,7 @@ describe("Skip assertion mark:", () => {
 // -------------------------------------------
 
 describe("Source that throws Error:", () => {
-  test("Syntaxically wrong source without any assertion means error result:", async () => {
+  test("syntactically wrong source without any assertion means error result:", async () => {
     const [results] = await doTests(
       "./test/inputs/invalid-source-unasserted.js"
     );
@@ -262,7 +262,7 @@ describe("Source that throws Error:", () => {
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(1);
-    expect(results[0].errMsg).toMatch("remaining output");
+    expect(results[0].errMsg).toMatch("error");
   });
 
   test("Error-throwing source with previous assertions means error result at the end:", async () => {
@@ -274,22 +274,9 @@ describe("Source that throws Error:", () => {
     expect(failedCount).toEqual(2);
     expect(results[0].pass).toBeFalsy();
     expect(results[1].pass).toBeTruthy();
-    expect(results[2].errMsg).toMatch("remaining output");
+    expect(results[2].errMsg).toMatch("error");
   });
 
-  // ----------
-  test("Tests the error output of syntaxically wrong source, asserted:", async () => {
-    const [results] = await doTests("./test/inputs/invalid-source-asserted.js");
-    const { passedCount } = getStats(results);
-    expect(passedCount).toEqual(1);
-  });
-
-  test("Tests error-throwing asserted source:", async () => {
-    const [results] = await doTests("./test/inputs/error-throwing-asserted.js");
-    const { passedCount } = getStats(results);
-    expect(results[0].received).toMatch(/Unexpected token/);
-    expect(passedCount).toEqual(1);
-  });
   // ----------
 
   test("Valid test until the first error-throw only. Even if that error does match the assertion, if there are more assertions after that, returns error.", async () => {
@@ -304,6 +291,23 @@ describe("Source that throws Error:", () => {
     expect(results[2].received).toBeUndefined();
     expect(results[3].pass).toBeFalsy();
     expect(results[3].errMsg).toMatch("The source has ended prematurely");
+  });
+});
+
+describe("Source that does catch the Error:", () => {
+  test("Tests the error output of syntactically wrong source, asserted:", async () => {
+    const [results] = await doTests("./test/inputs/invalid-source-asserted.js");
+    const { totalCount, passedCount } = getStats(results);
+    expect(totalCount).toEqual(1);
+    expect(passedCount).toEqual(1);
+  });
+
+  test("Tests error-throwing asserted source:", async () => {
+    const [results] = await doTests("./test/inputs/error-throwing-asserted.js");
+    const { totalCount, passedCount } = getStats(results);
+    expect(results[0].received).toMatch(/Unexpected token/);
+    expect(totalCount).toEqual(1);
+    expect(passedCount).toEqual(1);
   });
 });
 
