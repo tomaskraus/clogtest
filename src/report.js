@@ -84,6 +84,7 @@ const printFail =
     } else {
       print(`${cerr("!!!")} ${lineInfo}`);
       print(`${cerr("Error")}: ${error.message}`);
+      // TODO: add stack info
     }
     if (lineNumber > 0) {
       print("");
