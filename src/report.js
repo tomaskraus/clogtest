@@ -68,10 +68,10 @@ const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
 
 const printFail =
   (inputFileName, outputLines) =>
-  ({ lineNumber, expected, received, errMsg }) => {
+  ({ lineNumber, expected, received, error }) => {
     const lineInfo =
       csh(inputFileName) + (lineNumber > 0 ? cdg(":" + lineNumber) : "");
-    if (!errMsg) {
+    if (!error) {
       const exppatt = new SSP(expected);
 
       print(`${cerr("●")} ${lineInfo}`);
@@ -83,7 +83,7 @@ const printFail =
       print(`  does not match the output: \t${receivedOutput}`);
     } else {
       print(`${cerr("!!!")} ${lineInfo}`);
-      print(`${cerr("Error")}: ${errMsg}`);
+      print(`${cerr("Error")}: ${error.message}`);
     }
     if (lineNumber > 0) {
       print("");

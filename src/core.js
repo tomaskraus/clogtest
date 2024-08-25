@@ -146,7 +146,7 @@ const createTestInputs = (
   outputGroups,
   restOutput,
   sourceLines,
-  wasErrorFromInput
+  errorFromInput
 ) => {
   const ASSERTION_MARK_SKIP = assertionMarkStr + SKIP_MARK;
   lineNumber = 1;
@@ -175,12 +175,13 @@ const createTestInputs = (
       };
     });
 
-  if (testInputs.length === outputGroups.length && wasErrorFromInput) {
+  if (testInputs.length === outputGroups.length && errorFromInput) {
     // the last output item is an error one
     testInputs.push({
-      errMsg:
+      error: new Error(
         "There is an error thrown which is not checked against any assertion: \n\n" +
-        restOutput,
+          restOutput
+      ),
       lineNumber: -1,
     });
   }
@@ -194,15 +195,21 @@ const createTestInputs = (
     itemsUndefinedReceived[0].received = restOutput;
   }
 
+  const itemsUndefinedReceived2 = testInputs.filter(
+    (item) => item.received === undefined
+  );
   // look for error that was thrown before all assertion marks were consumed
-  if (itemsUndefinedReceived.length > 1) {
+  if (itemsUndefinedReceived2.length > 0) {
     const lastWhichReceives =
-      testInputs[testInputs.length - itemsUndefinedReceived.length].lineNumber;
+      testInputs[testInputs.length - 1 - itemsUndefinedReceived2.length];
     testInputs.push({
-      lineNumber: lastWhichReceives,
-      errMsg:
-        "The source has ended prematurely, with no test inputs for remaining assertions. Probably an Error was thrown and not caught. \nSource's last output was before the line: \n\n" +
-        lastWhichReceives.received,
+      lineNumber: lastWhichReceives.lineNumber,
+      error: new Error(
+        `The source has ended prematurely, with no test inputs for remaining assertions. Probably an Error was thrown and not caught. 
+  Source's last output was before the line [${lastWhichReceives.lineNumber}]: 
+  
+  ${lastWhichReceives.received}`
+      ),
     });
   }
 
@@ -252,7 +259,7 @@ const getTestInputAndSource = async (
       groups,
       rest,
       source,
-      error !== null
+      error
     );
     return [testInputs, source];
   } finally {
@@ -268,25 +275,25 @@ const getTestInputAndSource = async (
 
 // ----------------------------------------------------------------
 
-const testOneItem = ({ lineNumber, expected, received, skip, errMsg }) => {
+const testOneItem = ({ lineNumber, expected, received, skip, error }) => {
   log(
     `  testOneItem  [${lineNumber}] pattern:[${expected}] output:[${received}] ${skip ? "--SKIPPED--" : ""}`
   );
 
   let pass = false;
   try {
-    if (!errMsg) {
+    if (!error) {
       pass = new SSP(expected).test(received);
     }
   } catch (err) {
-    errMsg = err.message;
+    error = err;
   }
   return {
     lineNumber,
     expected,
     received,
     pass,
-    errMsg,
+    error,
     skip,
   };
 };

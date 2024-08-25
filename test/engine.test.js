@@ -113,7 +113,7 @@ describe("normal ops", () => {
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(2);
     expect(results[0].pass).toBeFalsy();
-    expect(results[0].errMsg).not.toBeUndefined();
+    expect(results[0].error).not.toBeUndefined();
     expect(results[1].pass).toBeTruthy();
     expect(failedCount).toEqual(1);
   });
@@ -252,7 +252,7 @@ describe("Source that throws Error:", () => {
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(1);
-    expect(results[0].errMsg).toMatch("error");
+    expect(results[0].error.message).toMatch("error");
   });
 
   test("Error-throwing source without any assertion means error result:", async () => {
@@ -262,7 +262,7 @@ describe("Source that throws Error:", () => {
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(1);
-    expect(results[0].errMsg).toMatch("error");
+    expect(results[0].error.message).toMatch("error");
   });
 
   test("Error-throwing source with previous assertions means error result at the end:", async () => {
@@ -274,7 +274,7 @@ describe("Source that throws Error:", () => {
     expect(failedCount).toEqual(2);
     expect(results[0].pass).toBeFalsy();
     expect(results[1].pass).toBeTruthy();
-    expect(results[2].errMsg).toMatch("error");
+    expect(results[2].error.message).toMatch("error");
   });
 
   // ----------
@@ -290,7 +290,7 @@ describe("Source that throws Error:", () => {
     expect(results[2].pass).toBeFalsy();
     expect(results[2].received).toBeUndefined();
     expect(results[3].pass).toBeFalsy();
-    expect(results[3].errMsg).toMatch("The source has ended prematurely");
+    expect(results[3].error.message).toMatch("The source has ended prematurely");
   });
 });
 
