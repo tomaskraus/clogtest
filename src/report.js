@@ -97,12 +97,10 @@ const printFail =
  * Pretty prints results summary
  * @param {statsObj} stats test results summary data
  */
-const printResume = ({
-  totalCount,
-  skippedCount,
-  passedCount,
-  failedCount,
-}) => {
+const printResume = (
+  { totalCount, skippedCount, passedCount, failedCount },
+  customLabel = "Tests"
+) => {
   log(`printResume:`);
 
   let str = `${totalCount} total`;
@@ -116,7 +114,7 @@ const printResume = ({
     str = `${cerr.bold(failedCount + " failed")}, ${str}`;
   }
 
-  print(`Tests: \t${str}`);
+  print(`${customLabel}: \t${str}`);
   log(`printResume: END`);
 };
 
