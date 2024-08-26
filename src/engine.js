@@ -8,6 +8,7 @@ const {
   getTestInputAndSource,
   runTests,
   getInjectedFileName,
+  checkFile,
 } = require("./core.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("engine");
@@ -25,6 +26,12 @@ const srcName = (jsFileName, tsFileName) => {
     throw new Error(`jsFileName: [${jsFileName}] must end with ".js"`);
   }
   return tsFileName || jsFileName;
+};
+
+const doCheckFile = async (jsFileName, tsFileName = null) => {
+  const srcFileName = srcName(jsFileName, tsFileName);
+  log(`check file: [${srcFileName}]`);
+  return checkFile(jsFileName, tsFileName);
 };
 
 /**
@@ -136,6 +143,11 @@ module.exports = (options = DEFAULT_OPTIONS) => {
   log(`Engine created with these options: [${JSON.stringify(opts)}]`);
   return {
     srcName,
+
+    /**
+     * checks the file for errors
+     */
+    doCheckFile,
     /**
      * Performs tests.
      * @param {string} fileName

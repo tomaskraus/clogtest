@@ -21,12 +21,14 @@ const printHeader = (action, fileName) => {
 const getBusinessLogic = (options) => {
   const engine = engineProvider(options);
   return {
-    check: async (fileName, tsFileName = null) => {
+    checkAndPrintResults: async (fileName, tsFileName = null) => {
       log(`check: START ---------`);
       printHeader("check", engine.srcName(fileName, tsFileName));
-
+      const results = await engine.doCheckFile(fileName, tsFileName);
+      const fails = results.filter(engine.failedResultPredicate);
+      printFails(fails, engine.srcName(fileName, tsFileName));
+      printResume(engine.getStats(results), "Check");
       log(`check: END - - - - -`);
-      const fails = [];
       return fails.length === 0 ? 0 : 1;
     },
 

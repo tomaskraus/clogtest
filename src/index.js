@@ -78,7 +78,7 @@ program
       getBusinessLogicOptions(options)
     );
     process.exitCode = await safeRunner(() =>
-      businessLogic.check(
+      businessLogic.checkAndPrintResults(
         getJsFileName(source, options.jsDir),
         getSourceFileName(source)
       )

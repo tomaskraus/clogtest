@@ -221,6 +221,17 @@ const createUniqueSplitMark = () => {
   return "^" + crypto.randomUUID();
 };
 
+const checkFile = async (filename, tsFileName) => {
+  let finalFileName = tsFileName || filename;
+  if (tsFileName) {
+    log(`  typeScript file requested: [${tsFileName}]`);
+  }
+  const [_, error] = await runSourceAndGatherOutputLines(filename);
+  return error
+    ? [{ pass: false, fileName: finalFileName, lineNumber: -1, error }]
+    : [{ pass: true }];
+};
+
 /**
  *
  * @param {{assertionMark, keepTempFile}} options
@@ -313,6 +324,7 @@ const runTests = (testInputs) => {
 
 module.exports = {
   getTestInputAndSource,
+  checkFile,
   runTests,
   getInjectedFileName,
 };
