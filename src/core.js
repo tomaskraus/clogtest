@@ -228,8 +228,8 @@ const checkFile = async (filename, tsFileName) => {
   }
   const [_, error] = await runSourceAndGatherOutputLines(filename);
   return error
-    ? [{ pass: false, fileName: finalFileName, lineNumber: -1, error }]
-    : [{ pass: true }];
+    ? { pass: false, fileName: finalFileName, lineNumber: -1, error }
+    : { pass: true };
 };
 
 /**

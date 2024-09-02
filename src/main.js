@@ -24,7 +24,7 @@ const getBusinessLogic = (options) => {
     checkAndPrintResults: async (fileName, tsFileName = null) => {
       log(`check: START ---------`);
       printHeader("check", engine.srcName(fileName, tsFileName));
-      const results = await engine.doCheckFile(fileName, tsFileName);
+      const results = [await engine.doCheckFile(fileName, tsFileName)];
       const fails = results.filter(engine.failedResultPredicate);
       printFails(fails, engine.srcName(fileName, tsFileName));
       printResume(engine.getStats(results), "Check");
