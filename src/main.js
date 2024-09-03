@@ -26,7 +26,7 @@ const getBusinessLogic = (options) => {
       printHeader("check", engine.srcName(fileName, tsFileName));
       const results = [await engine.doCheckFile(fileName, tsFileName)];
       const fails = results.filter(engine.failedResultPredicate);
-      printFails(fails, engine.srcName(fileName, tsFileName));
+      printFails(fails);
       printResume(engine.getStats(results), "Check");
       log(`check: END - - - - -`);
       return fails.length === 0 ? 0 : 1;
@@ -37,7 +37,7 @@ const getBusinessLogic = (options) => {
       printHeader("test", engine.srcName(fileName, tsFileName));
       const [allResults, source] = await engine.doTests(fileName, tsFileName);
       const fails = allResults.filter(engine.failedResultPredicate);
-      printFails(fails, engine.srcName(fileName, tsFileName), source);
+      printFails(fails, source);
       printResume(engine.getStats(allResults));
       log(`doTestsAndPrintResults: END - - - - -`);
       return fails.length === 0 ? 0 : 1;

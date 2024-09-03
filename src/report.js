@@ -39,10 +39,10 @@ const limitAndEscape = (str) => {
  * @param {string} inputFileName
  * @param {[string]} outputLines
  */
-const printFails = (fails, inputFileName, outputLines) => {
-  log(`printFails for file [${inputFileName}]`);
+const printFails = (fails, outputLines) => {
+  log(`printFails:`);
   // console.log("inputLines: ", inputLines);
-  fails.map(printFail(inputFileName, outputLines));
+  fails.map(printFail(outputLines));
   log(`printFails END`);
 };
 
@@ -67,10 +67,10 @@ const printSourceLinesAround = (lines, paddingStr, lineNumber) => {
 };
 
 const printFail =
-  (inputFileName, outputLines) =>
-  ({ lineNumber, expected, received, error }) => {
+  (outputLines) =>
+  ({ fileName, lineNumber, expected, received, error }) => {
     const lineInfo =
-      csh(inputFileName) + (lineNumber > 0 ? cdg(":" + lineNumber) : "");
+      csh(fileName) + (lineNumber > 0 ? cdg(":" + lineNumber) : "");
     if (!error) {
       const exppatt = new SSP(expected);
 

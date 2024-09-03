@@ -142,6 +142,7 @@ const prepareAssertionStr = (assertionMark, s) => {
  * @returns {object[]} [{lineNumber: number, linePadding: string, expected: string, received: string, skip: boolean}]
  */
 const createTestInputs = (
+  fileName,
   assertionMarkStr,
   outputGroups,
   restOutput,
@@ -170,6 +171,7 @@ const createTestInputs = (
     .map((item) => {
       return {
         ...item,
+        fileName,
         expected: prepareAssertionStr(assertionMarkStr, item.expected),
         received: outputGroups[groupIndex++], // group count is always less or equals assertion Mark count
       };
@@ -266,6 +268,7 @@ const getTestInputAndSource = async (
     const [groups, rest] = groupOutputBySplitMarks(splitMark, output);
     const source = tsInput || input;
     const testInputs = createTestInputs(
+      tsFileName || fileName,
       assertionMark,
       groups,
       rest,
@@ -286,7 +289,14 @@ const getTestInputAndSource = async (
 
 // ----------------------------------------------------------------
 
-const testOneItem = ({ lineNumber, expected, received, skip, error }) => {
+const testOneItem = ({
+  fileName,
+  lineNumber,
+  expected,
+  received,
+  skip,
+  error,
+}) => {
   log(
     `  testOneItem  [${lineNumber}] pattern:[${expected}] output:[${received}] ${skip ? "--SKIPPED--" : ""}`
   );
@@ -300,6 +310,7 @@ const testOneItem = ({ lineNumber, expected, received, skip, error }) => {
     error = err;
   }
   return {
+    fileName,
     lineNumber,
     expected,
     received,
