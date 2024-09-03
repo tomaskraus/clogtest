@@ -180,6 +180,7 @@ const createTestInputs = (
   if (testInputs.length === outputGroups.length && errorFromInput) {
     // the last output item is an error one
     testInputs.push({
+      fileName,
       error: new Error(
         "There is an error thrown which is not checked against any assertion: \n\n" +
           restOutput
@@ -205,6 +206,7 @@ const createTestInputs = (
     const lastWhichReceives =
       testInputs[testInputs.length - 1 - itemsUndefinedReceived2.length];
     testInputs.push({
+      fileName,
       lineNumber: lastWhichReceives.lineNumber,
       error: new Error(
         `The source has ended prematurely, with no test inputs for remaining assertions. Probably an Error was thrown and not caught. 
@@ -216,6 +218,7 @@ const createTestInputs = (
   }
 
   log(`createTestInputs item count [${testInputs.length}]`);
+  log(`createTestInputs test inputs:`, testInputs);
   return testInputs;
 };
 
