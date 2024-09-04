@@ -5,10 +5,11 @@
 const SSP = require("simple-string-pattern").default;
 
 const {
-  getTestInputAndSource,
+  getTestInputs,
   runTests,
   getInjectedFileName,
   checkFile,
+  getSrcInputLines,
 } = require("./core.js");
 const { appLog } = require("./utils.js");
 const log = appLog.extend("engine");
@@ -45,16 +46,16 @@ const createDoTests =
    * Performs tests.
    * @param {string} fileName
    * @param {string | null} tsFileName
-   * @returns {[testResults[], string[]]} [all results (incl. skipped ones), source content]
+   * @returns {testResults[]} [all results (incl. skipped ones), source content]
    */
   async (fileName, tsFileName = null) => {
-    const [testInputs, source] = await getTestInputAndSource(
+    const testInputs = await getTestInputs(
       { assertionMark, keepTempFile },
       fileName,
       tsFileName
     );
     const testResults = runTests(testInputs);
-    return [testResults, source];
+    return testResults;
   };
 
 /**
@@ -98,7 +99,7 @@ const createFillAssertions =
 
     const srcFileName = srcName(fileName, tsFileName);
     log(`fillAssertions, from file: [${srcFileName}]`);
-    const [testInputs, inputs] = await getTestInputAndSource(
+    const [testInputs, inputs] = await getTestInputs(
       { assertionMark, keepTempFile },
       fileName,
       tsFileName
@@ -152,12 +153,12 @@ module.exports = (options = DEFAULT_OPTIONS) => {
      * Performs tests.
      * @param {string} fileName
      * @param {string | null} tsFileName
-     * @returns {[testResults[], testResults[], testResults[], string[]]} [all results, failures, skipped, source content]
+     * @returns {testResult[]} all results
      */
     doTests: createDoTests(opts),
     /**
      *
-     * @param {object[]} results
+     * @param {testResult[]} results
      * @returns Stats object: {totalCount, passedCount, failedCount, SkippedCount}
      */
     getStats,
@@ -178,5 +179,6 @@ module.exports = (options = DEFAULT_OPTIONS) => {
     options,
     DEFAULT_OPTIONS,
     getInjectedFileName,
+    getSrcInputLines,
   };
 };

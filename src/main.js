@@ -35,8 +35,9 @@ const getBusinessLogic = (options) => {
     doTestsAndPrintResults: async (fileName, tsFileName = null) => {
       log(`doTestsAndPrintResults: START ---------`);
       printHeader("test", engine.srcName(fileName, tsFileName));
-      const [allResults, source] = await engine.doTests(fileName, tsFileName);
+      const allResults = await engine.doTests(fileName, tsFileName);
       const fails = allResults.filter(engine.failedResultPredicate);
+      const source = engine.getSrcInputLines(fileName, tsFileName);
       printFails(fails, source);
       printResume(engine.getStats(allResults));
       log(`doTestsAndPrintResults: END - - - - -`);

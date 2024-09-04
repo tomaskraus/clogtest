@@ -226,59 +226,73 @@ const createUniqueSplitMark = () => {
   return "^" + crypto.randomUUID();
 };
 
-const checkFile = async (filename, tsFileName) => {
-  let finalFileName = tsFileName || filename;
-  if (tsFileName) {
-    log(`  typeScript file requested: [${tsFileName}]`);
-  }
-  const [_, error] = await runSourceAndGatherOutputLines(filename);
+const checkFile = async (fileName, tsFileName) => {
+  let finalFileName = getSourceFileName(fileName, tsFileName);
+  const [_, error] = await runSourceAndGatherOutputLines(fileName);
   return error
     ? { pass: false, fileName: finalFileName, lineNumber: -1, error }
-    : { pass: true };
+    : { pass: true, fileName: finalFileName, lineNumber: -1 };
+};
+
+const getSourceFileName = (jsFileName, srcFileName) => {
+  if (srcFileName) {
+    log(`getSourceFileName: custom source file requested: [${srcFileName}]`);
+  }
+  return srcFileName || jsFileName;
+};
+
+/**
+ *
+ * @param {string} jsFileName
+ * @param {string} srcFileName
+ * @returns {Promise<string[]>}
+ */
+const getSrcInputLines = async (jsFileName, srcFileName = null) => {
+  log(`getSrcInputLines: file: [${jsFileName}]`);
+  return loadInputFileLines(getSourceFileName(jsFileName, srcFileName));
 };
 
 /**
  *
  * @param {{assertionMark, keepTempFile}} options
- * @param {string} fileName
- * @param {string?} tsFileName
- * @returns {Promise<[[object], [string]]>}
+ * @param {string} jsFileName
+ * @param {string?} srcFileName
+ * @returns {Promise<string[]>}
  */
-const getTestInputAndSource = async (
+const getTestInputs = async (
   { assertionMark, keepTempFile },
-  fileName,
-  tsFileName
+  jsFileName,
+  srcFileName = null
 ) => {
-  const input = await loadInputFileLines(fileName);
-  let tsInput = null;
+  log("getTestInputs:");
+  const jsInput = await loadInputFileLines(jsFileName);
+  const srcInput = await (srcFileName
+    ? loadInputFileLines(srcFileName)
+    : jsInput);
+
   let splitMarkInjectedFileName = null;
-  log("getTestInputAndSource:");
-  if (tsFileName) {
-    log(`  typeScript file requested: [${tsFileName}]`);
-    tsInput = await loadInputFileLines(tsFileName);
-  }
   try {
     const splitMark = createUniqueSplitMark();
     splitMarkInjectedFileName = await createFileWithInjectedSplitPrints(
       assertionMark,
       splitMark,
-      fileName,
-      input
+      jsFileName,
+      jsInput
     );
     const [output, error] = runSourceAndGatherOutputLines(
       splitMarkInjectedFileName
     );
     const [groups, rest] = groupOutputBySplitMarks(splitMark, output);
-    const source = tsInput || input;
+    const fileName = getSourceFileName(jsFileName, srcFileName);
     const testInputs = createTestInputs(
-      tsFileName || fileName,
+      fileName,
       assertionMark,
       groups,
       rest,
-      source,
+      srcInput,
       error
     );
-    return [testInputs, source];
+    return testInputs;
   } finally {
     if (splitMarkInjectedFileName && !keepTempFile) {
       log(`  deleting temporary file [${splitMarkInjectedFileName}] ...`);
@@ -337,8 +351,10 @@ const runTests = (testInputs) => {
 };
 
 module.exports = {
-  getTestInputAndSource,
+  getTestInputs,
   checkFile,
   runTests,
   getInjectedFileName,
+  getSourceFileName,
+  getSrcInputLines,
 };
