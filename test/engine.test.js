@@ -25,14 +25,14 @@ describe("srcName", () => {
 
 describe("normal ops", () => {
   test("empty input means empty results", async () => {
-    const [results] = await doTests("./test/inputs/empty.js");
+    const results = await doTests("./test/inputs/empty.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(0);
     expect(failedCount).toEqual(0);
   });
 
   test("non-empty input with no assertions returns empty result", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/no-assertions-and-some-output.js"
     );
     const { totalCount } = getStats(results);
@@ -40,7 +40,7 @@ describe("normal ops", () => {
   });
 
   test("non-empty input with some output after the succeeded assertion does NOT throw an `unchecked output error`", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/some-output-after-assertion.js"
     );
     const { totalCount } = getStats(results);
@@ -49,21 +49,21 @@ describe("normal ops", () => {
   });
 
   test("newline assertions work", async () => {
-    const [results] = await doTests("./test/inputs/newlines.js");
+    const results = await doTests("./test/inputs/newlines.js");
     const { totalCount, passedCount } = getStats(results);
     expect(totalCount).toEqual(2);
     expect(passedCount).toEqual(2);
   });
 
   test("tests computed multi-line output", async () => {
-    const [results] = await doTests("./test/inputs/computed-multi-line.js");
+    const results = await doTests("./test/inputs/computed-multi-line.js");
     const { totalCount, passedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(passedCount).toEqual(1);
   });
 
   test("input with two assertions means two results", async () => {
-    const [results] = await doTests("./test/inputs/one-true-one-false.js");
+    const results = await doTests("./test/inputs/one-true-one-false.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(2);
     expect(results[0].pass).toBeTruthy();
@@ -75,7 +75,7 @@ describe("normal ops", () => {
   });
 
   test("input with assertions inside catch blocks works", async () => {
-    const [results] = await doTests("./test/inputs/multiple-error-success.js");
+    const results = await doTests("./test/inputs/multiple-error-success.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(2);
     expect(failedCount).toEqual(0);
@@ -84,14 +84,14 @@ describe("normal ops", () => {
   });
 
   test("Fully block-commented code means empty results", async () => {
-    const [results] = await doTests("./test/inputs/comment-all.js");
+    const results = await doTests("./test/inputs/comment-all.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(0);
     expect(failedCount).toEqual(0);
   });
 
   test("Empty output assertion works", async () => {
-    const [results] = await doTests("./test/inputs/empty-output-assertion.js");
+    const results = await doTests("./test/inputs/empty-output-assertion.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(failedCount).toEqual(0);
@@ -99,7 +99,7 @@ describe("normal ops", () => {
   });
 
   test("Assertions inside block comments are not tested", async () => {
-    const [results] = await doTests("./test/inputs/comments.js");
+    const results = await doTests("./test/inputs/comments.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(3);
     expect(results[0].pass).toBeTruthy();
@@ -109,7 +109,7 @@ describe("normal ops", () => {
   });
 
   test("Assertion without a body fails.", async () => {
-    const [results] = await doTests("./test/inputs/empty-assertion.js");
+    const results = await doTests("./test/inputs/empty-assertion.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(2);
     expect(results[0].pass).toBeFalsy();
@@ -123,7 +123,7 @@ describe("normal ops", () => {
 
 describe("possible error ops", () => {
   test("assertions-under-used", async () => {
-    const [results] = await doTests("./test/inputs/assertions-under-used.js");
+    const results = await doTests("./test/inputs/assertions-under-used.js");
     const { totalCount } = getStats(results);
     expect(totalCount).toEqual(3);
     expect(results[0].pass).toBeTruthy();
@@ -134,7 +134,7 @@ describe("possible error ops", () => {
   });
 
   test("assertions-over-used", async () => {
-    const [results] = await doTests("./test/inputs/assertions-over-used.js");
+    const results = await doTests("./test/inputs/assertions-over-used.js");
     const { totalCount } = getStats(results);
     expect(totalCount).toEqual(5);
     expect(results[0].pass).toBeTruthy();
@@ -150,7 +150,7 @@ describe("possible error ops", () => {
   });
 
   test("assertions-over-used-no-output", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/assertions-over-used-no-output.js"
     );
     const { totalCount } = getStats(results);
@@ -162,7 +162,7 @@ describe("possible error ops", () => {
 
 describe("TypeScript", () => {
   test("Can test typescript files:", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./dist/test/inputs/ts-input.js",
       "./test/inputs/ts-input.ts"
     );
@@ -185,7 +185,7 @@ describe("Custom assertion mark:", () => {
   });
 
   test("Works with custom assertion mark", async () => {
-    const [results] = await doTests("./test/inputs/custom-assertion-mark.js");
+    const results = await doTests("./test/inputs/custom-assertion-mark.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(8);
     expect(results[0].pass).toBeTruthy();
@@ -201,14 +201,14 @@ describe("Custom assertion mark:", () => {
   });
 
   test("Recognizes only custom assertion marks in the input", async () => {
-    const [results] = await doTests("./test/inputs/one-true-one-false.js");
+    const results = await doTests("./test/inputs/one-true-one-false.js");
     const { totalCount, failedCount } = getStats(results);
     expect(totalCount).toEqual(0);
     expect(failedCount).toEqual(0);
   });
 
   test("Skips custom assertion marks with skip mark", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./dist/test/inputs/custom-assertion-mark-skip.js",
       "./test/inputs/custom-assertion-mark-skip.ts"
     );
@@ -232,7 +232,7 @@ describe("Custom assertion mark:", () => {
 
 describe("Skip assertion mark:", () => {
   test("Skips tests with skip-mark", async () => {
-    const [results] = await doTests("./test/inputs/skip-assertion-mark.js");
+    const results = await doTests("./test/inputs/skip-assertion-mark.js");
     const { totalCount, failedCount, passedCount, skippedCount } =
       getStats(results);
     expect(totalCount).toEqual(2);
@@ -246,7 +246,7 @@ describe("Skip assertion mark:", () => {
 
 describe("Source that throws Error:", () => {
   test("syntactically wrong source without any assertion means error result:", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/invalid-source-unasserted.js"
     );
     const { totalCount, failedCount } = getStats(results);
@@ -256,7 +256,7 @@ describe("Source that throws Error:", () => {
   });
 
   test("Error-throwing source without any assertion means error result:", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/error-throwing-source-unasserted.js"
     );
     const { totalCount, failedCount } = getStats(results);
@@ -266,7 +266,7 @@ describe("Source that throws Error:", () => {
   });
 
   test("Error-throwing source with previous assertions means error result at the end:", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/error-throwing-source-with-prev-assertions.js"
     );
     const { totalCount, failedCount } = getStats(results);
@@ -280,7 +280,7 @@ describe("Source that throws Error:", () => {
   // ----------
 
   test("Valid test until the first error-throw only. Even if that error does match the assertion, if there are more assertions after that, returns error.", async () => {
-    const [results] = await doTests(
+    const results = await doTests(
       "./test/inputs/throws-only-the-first-error.js"
     );
     expect(results.length).toEqual(4); // 3 + one additional result error
@@ -296,14 +296,14 @@ describe("Source that throws Error:", () => {
 
 describe("Source that does catch the Error:", () => {
   test("Tests the error output of syntactically wrong source, asserted:", async () => {
-    const [results] = await doTests("./test/inputs/invalid-source-asserted.js");
+    const results = await doTests("./test/inputs/invalid-source-asserted.js");
     const { totalCount, passedCount } = getStats(results);
     expect(totalCount).toEqual(1);
     expect(passedCount).toEqual(1);
   });
 
   test("Tests error-throwing asserted source:", async () => {
-    const [results] = await doTests("./test/inputs/error-throwing-asserted.js");
+    const results = await doTests("./test/inputs/error-throwing-asserted.js");
     const { totalCount, passedCount } = getStats(results);
     expect(results[0].received).toMatch(/Unexpected token/);
     expect(totalCount).toEqual(1);
@@ -333,7 +333,7 @@ describe("keepTempFile test", () => {
     expect.assertions(2);
     const { doTests } = engineProvider();
 
-    const [results] = await doTests("test/inputs/keep-temp-2.js");
+    const results = await doTests("test/inputs/keep-temp-2.js");
     expect(results.length).toEqual(2);
 
     try {

@@ -99,7 +99,8 @@ const createFillAssertions =
 
     const srcFileName = srcName(fileName, tsFileName);
     log(`fillAssertions, from file: [${srcFileName}]`);
-    const [testInputs, inputs] = await getTestInputs(
+    const inputs = await getSrcInputLines(fileName, tsFileName);
+    const testInputs = await getTestInputs(
       { assertionMark, keepTempFile },
       fileName,
       tsFileName
