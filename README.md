@@ -137,6 +137,10 @@ console.log(1 + 1);
 console.log(1 + 1 === 2);
 //=> true
 
+// Use escape sequence to express special characters (e.g newline) in the pattern
+console.log("Hello,\nWorld!");
+//=> Hello,\nWorld!
+
 // enclose the pattern in double quotes to match leading and/or trailing spaces
 console.log(" hello ");
 //=> " hello "
