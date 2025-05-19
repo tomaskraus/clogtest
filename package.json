@@ -1,6 +1,6 @@
 {
   "name": "clogtest",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI output-assertion-test app. Runs a javascript file and tests its standard output againts expected values written in the special comments (//=>) in that file.",
   "main": "src/index.js",
   "files": [
