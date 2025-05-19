@@ -37,7 +37,7 @@ const getBusinessLogic = (options) => {
       printHeader("test", engine.srcName(fileName, tsFileName));
       const allResults = await engine.doTests(fileName, tsFileName);
       const fails = allResults.filter(engine.failedResultPredicate);
-      const source = engine.getSrcInputLines(fileName, tsFileName);
+      const source = await engine.getSrcInputLines(fileName, tsFileName);
       printFails(fails, source);
       printResume(engine.getStats(allResults));
       log(`doTestsAndPrintResults: END - - - - -`);
